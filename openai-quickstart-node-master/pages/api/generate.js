@@ -42,7 +42,7 @@ export default async function (req, res) {
       model: "text-davinci-003",
       prompt: quizMePrompt(trimUnfinishedSentences(inputText), amount),
       temperature: 0.3,
-      max_tokens: 3700,
+      max_tokens: 2000,
       n:1,
     });
 
