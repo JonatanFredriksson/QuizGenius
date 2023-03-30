@@ -25,9 +25,12 @@
   flex-direction: column;
   align-items: center;
   padding-top: 60px;
+  padding-left: 60px;
+  padding-right: 60px;
 }
 .main .icon {
-  width: 34px;
+  width: 300px;
+  height: fit-content;
 }
 .main h3 {
   font-size: 32px;
@@ -64,4 +67,6 @@
 .main .result {
   font-weight: bold;
   margin-top: 40px;
+  white-space: pre-line;
 }
+
