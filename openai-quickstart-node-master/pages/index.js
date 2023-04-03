@@ -3,8 +3,11 @@ import { useState } from "react";
 import styles from "./index.module.css";
 
 export default function Home() {
-  const [animalInput, setAnimalInput] = useState("");
+  const [textInput, setTextInput] = useState("");
   const [result, setResult] = useState();
+  const [amountInput, setAmountInput] = useState("");
+  const [qaPairs, setQAPairs] = useState([]);
+  const [showAnswers, setShowAnswers] = useState(false);
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -14,7 +17,8 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ inputText: animalInput }),
+    
+        body: JSON.stringify({ inputText: textInput, amount: amountInput }),
       });
 
       const data = await response.json();
@@ -22,22 +26,60 @@ export default function Home() {
         throw data.error || new Error(`Request failed with status ${response.status}`);
       }
 
-      setResult(data.result);
+      //setResult(data.result);
+      const formattedResult = formatResult(data.result);
+      setResult(formattedResult);
+      console.log("NEW LOG YIPPI: " + formattedResult);
+      
       //ny metod som splittar upp i questions answers i array så att vi kan iterera varje steg för steg och sätta upp form och buttons för interaktion
       const test = trimUnfinishedSentences(data.result);
       console.log(test);
       
 
       console.log(trimUnfinishedSentences(data.result));
-      setAnimalInput("");
+      setTextInput("");
       let arr = formatResult(data.result);
       console.log(arr);
+
+
+      setAmountInput("");
+      setQAPairs(createQAPairs(data.result));
     } catch(error) {
       // Consider implementing your own error handling logic here
       console.error(error);
       alert(error.message);
     }
   }
+
+
+  var processedQs = qaPairs.map((qaPair, index) => (
+    <div key={index} className={styles.qaPair}>
+
+    <p>{qaPair.question}</p>
+    {showAnswers && <p className = {styles.answer}> {qaPair.answer}</p>}
+
+    </div>
+  ));
+
+  
+
+  function createQAPairs(result){
+    const paragraphs = result.split(/\n\s*\n/);
+    const qaPairs = [];
+
+    paragraphs.forEach((paragraph) => {
+      const lines = paragraph.split("\n");
+      if (lines.length >= 2) {
+        qaPairs.push({
+          question: lines[0],
+          answer: lines[1],
+        });
+      }
+    });
+    console.log(qaPairs);
+    return qaPairs;
+  }
+
 
   return (
     <div>
@@ -47,20 +89,55 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <div>
         <img src="/QuizGenius-1.png" className={styles.icon} />
-        <h3>Quiz my text</h3>
-        <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="Text"
-            placeholder="Enter a text"
-            value={animalInput}
-            onChange={(e) => setAnimalInput(e.target.value)}
+
+        </div>
+        <div>
+        <h3>Autogenerate quiz questions for your own text</h3>
+
+        </div>
+        <div class="containerForm">
+          <form onSubmit={onSubmit}>
+          <div class="textAreaInput">
+          <textarea 
+            class="text-input" 
+            type = "text"
+            placeholder="Type your text: "
+            rows="4" 
+            cols="50"
+            onInput={(e) => {
+              e.target.style.height = "auto";
+              e.target.style.height = e.target.scrollHeight + "px";
+            }}
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+          ></textarea>
+        </div>
+          
+
+          <div name="numberOfQuestions">
+            <input 
+            type="text" 
+            name="amount" 
+            placeholder="Number of questions" 
+            value={amountInput} 
+            onChange={(f) => setAmountInput(f.target.value)}
           />
-          <input type="submit" value="Quiz me!" />
-        </form>
-        <div className={styles.result}>{result}</div>
+          </div>
+          
+          <input type="submit" class="submitButton" value="Generate questions" />
+          </form>
+        </div>
         
+        <div className={styles.result}>
+          {qaPairs.length > 0 && (
+            <button onClick={() => setShowAnswers(!showAnswers)}>
+              {showAnswers ? "Hide Answers" : "Show Answers"}
+            </button>
+          )}
+          {processedQs}
+        </div>        
       </main>
     </div>
   );
@@ -100,6 +177,11 @@ function formatResult(generatedText)
   const formattedAnswers = answersNew.join('\n\n');
   const result = `Generated Questions: \n\n${formattedQuestions}\n\nGenerated Answers:\n\n${formattedAnswers}`;
 
+  const resultArray = questionsReg.map((question, index) => ({
+    question,
+    answer: answersNew[index],
+    showAnswer: false
+  }));
 
   return result;
 }
