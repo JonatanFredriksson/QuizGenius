@@ -3,7 +3,7 @@ import { useState } from "react";
 import styles from "./index.module.css";
 
 export default function Home() {
-  const [animalInput, setAnimalInput] = useState("");
+  const [textInput, setTextInput] = useState("");
   const [result, setResult] = useState();
   const [amountInput, setAmountInput] = useState("");
   const [qaPairs, setQAPairs] = useState([]);
@@ -18,7 +18,7 @@ export default function Home() {
           "Content-Type": "application/json",
         },
     
-        body: JSON.stringify({ inputText: animalInput, amount: amountInput }),
+        body: JSON.stringify({ inputText: textInput, amount: amountInput }),
       });
 
       const data = await response.json();
@@ -37,7 +37,7 @@ export default function Home() {
       
 
       console.log(trimUnfinishedSentences(data.result));
-      setAnimalInput("");
+      setTextInput("");
       let arr = formatResult(data.result);
       console.log(arr);
 
@@ -89,25 +89,47 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <div>
         <img src="/QuizGenius-1.png" className={styles.icon} />
-        <h3>Quiz my text</h3>
-        <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="Text"
-            placeholder="Enter a text"
-            value={animalInput}
-            onChange={(e) => setAnimalInput(e.target.value)}
-          />
-          <input 
+
+        </div>
+        <div>
+        <h3>Autogenerate quiz questions for your own text</h3>
+
+        </div>
+        <div class="containerForm">
+          <form onSubmit={onSubmit}>
+          <div class="textAreaInput">
+          <textarea 
+            class="text-input" 
+            type = "text"
+            placeholder="Type your text: "
+            rows="4" 
+            cols="50"
+            onInput={(e) => {
+              e.target.style.height = "auto";
+              e.target.style.height = e.target.scrollHeight + "px";
+            }}
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+          ></textarea>
+        </div>
+          
+
+          <div name="numberOfQuestions">
+            <input 
             type="text" 
             name="amount" 
             placeholder="Number of questions" 
             value={amountInput} 
             onChange={(f) => setAmountInput(f.target.value)}
           />
-          <input type="submit" value="Generate questions" />
-        </form>
+          </div>
+          
+          <input type="submit" class="submitButton" value="Generate questions" />
+          </form>
+        </div>
+        
         <div className={styles.result}>
           {qaPairs.length > 0 && (
             <button onClick={() => setShowAnswers(!showAnswers)}>
