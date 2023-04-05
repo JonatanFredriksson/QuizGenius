@@ -127,7 +127,7 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>Quiz GPT</title>
+        <title>QuizGenius</title>
         <link rel="icon" href="/dog.png" />
       </Head>
 

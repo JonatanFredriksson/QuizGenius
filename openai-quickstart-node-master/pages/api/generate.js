@@ -41,7 +41,7 @@ export default async function (req, res) {
     const inputChunks = chunkInputText(inputText, 250); // break input into 250-character chunks
     const nrOfQuestionsToGenerate = questionPerChunk(inputChunks, amount);
     const completionPromises = inputChunks.map(chunk => {
-      const prompt = quizMePrompt(trimUnfinishedSentences(chunk), nrOfQuestionsToGenerate); // vi skapar en prompt för varje chunk, det kan bli för många frågor då får vi rensa senare
+      const prompt = quizMePrompt(chunk, nrOfQuestionsToGenerate); // vi skapar en prompt för varje chunk, det kan bli för många frågor då får vi rensa senare
       console.log(nrOfQuestionsToGenerate)
       return openai.createCompletion({
         model: "text-davinci-003",
@@ -73,11 +73,11 @@ export default async function (req, res) {
   }
 }
 function quizMePrompt(input, amount) {
-  if(amount==0){ //kommer dock aldrig hända om man inte ger 0 som input
+  if (amount == 0) { //kommer dock aldrig hända om man inte ger 0 som input
     return '';
   }
-  else{
-    return `Give me ${amount} questions and corresponding answers on the following: ${input}, in the format of Q:questions A:answer`;
+  else {
+    return `Give me ${amount} questions and corresponding answers on the following: ${input}, in the format of Q: questions A: answer`;
 
   }
 
@@ -87,18 +87,42 @@ function quizMePrompt(input, amount) {
 
 function chunkInputText(inputText, chunkLimit) {
 
-  const splitChunks = []; //en tom array där vi placerar alla våra delningar av inputtextene
+  //splitta hela inputText där det finns punkter
+  const sentences = inputText.split(/[.!?]+\s*/); //splittar vid slutet på en mening
 
-  for (let i = 0; i < inputText.length; i += chunkLimit) { //gå igenom 
-    splitChunks.push(inputText.slice(i, i + chunkLimit));
+
+  let chunkArray = [];
+  let arr = [];
+
+  let stringCounter = 0;
+
+  
+  for (let i = 0; i < sentences.length; i++) { //loopa igenom hela sentences arrayen
+
+
+    stringCounter = stringCounter + sentences[i].length; //vi har en string counter för att räkna hur långa alla strängarna i arrayen är tillsammsn
+    arr.push(sentences[i]); //vi skickar in våra sentences i array
+    if (stringCounter > chunkLimit) { //chunken är tillräckligt lång och vi är klara med den
+      chunkArray = chunkArray.concat(arr); //vi storar våra menignar i chunkarray
+      arr.length = 0; //vi clearar den temporära arrayen
+      stringCounter = 0; //resetar string counter
+    } //måte också kunna hantera om vi aldrig når upp till gränsen eftersom en person kanske lämna in en väldigt kort text och vi vill fortfarande skicka den vidare
+    
   }
-  console.log(splitChunks);
+  if(arr.length > 0){ //vi har en sista inkomplett chunk vi behöver skicka vidare
+    chunkArray = chunkArray.concat(arr)
+    console.log("Sista arrayen: " + arr);
+    
+
+  }
+  
+  console.log(chunkArray);
   console.log("CHUNKY MONKY");
-  return splitChunks;
+  return chunkArray;
 }
 
-function questionPerChunk(inputChunks, amountOfQuestions){ //fördela antalet questions på antalet chunks och ta bort om det blir för många
- 
+function questionPerChunk(inputChunks, amountOfQuestions) { //fördela antalet questions på antalet chunks och ta bort om det blir för många
+
   const nrOfQuestionsPerChunk = Math.ceil(amountOfQuestions / inputChunks.length);
   return nrOfQuestionsPerChunk;
 
@@ -135,6 +159,7 @@ function formatResult(generatedText, amount) { //tar in amount eftersom vi vill 
 
     formattedQuestions.push(`${i + 1}. ${question}`);
     formattedAnswers.push(`${i + 1}. ${answer}`);
+    console.log("KLOCK: " + i);
   }
 
   // combine the formatted questions and answers into a single string
