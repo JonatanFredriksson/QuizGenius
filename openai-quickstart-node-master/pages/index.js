@@ -8,6 +8,8 @@ export default function Home() {
   const [amountInput, setAmountInput] = useState("");
   const [qaPairs, setQAPairs] = useState([]);
   const [showAnswers, setShowAnswers] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState("");
+  const [indexQ, setIndexQ] = useState();
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -44,6 +46,11 @@ export default function Home() {
 
       setAmountInput("");
       setQAPairs(createQAPairs(data.result));
+
+      console.log(qaPairs);
+
+      console.log(qaPairs[0]);
+
     } catch(error) {
       // Consider implementing your own error handling logic here
       console.error(error);
@@ -59,6 +66,7 @@ export default function Home() {
     {showAnswers && <p className = {styles.answer}> {qaPair.answer}</p>}
 
     </div>
+
   ));
 
   
@@ -77,9 +85,28 @@ export default function Home() {
       }
     });
     console.log(qaPairs);
+    setIndexQ(0);
+    setCurrentQuestion(qaPairs[0].question);
     return qaPairs;
   }
+  
 
+  function showNext(){
+    if (indexQ+1 < qaPairs.length){
+      console.log("new index", indexQ);
+      console.log(qaPairs.length);
+      setCurrentQuestion(qaPairs[indexQ+1].question);
+      setIndexQ(indexQ+1);
+    }
+  }
+
+  function showPrevious(){
+    if (indexQ-1 >= 0){
+      console.log(indexQ);
+      setCurrentQuestion(qaPairs[indexQ-1].question);
+      setIndexQ(indexQ-1);
+    }
+  }
 
   return (
     <div>
@@ -126,7 +153,8 @@ export default function Home() {
           />
           </div>
           
-          <input type="submit" class="submitButton" value="Generate questions" />
+          <input type="submit" class="submitButton" value="Generate questions"/>
+          
           </form>
         </div>
         
@@ -137,7 +165,16 @@ export default function Home() {
             </button>
           )}
           {processedQs}
-        </div>        
+        </div>    
+        <div className={styles.result}>
+          <button onClick={()=> showPrevious()}>
+            Previous
+          </button>
+          {currentQuestion}
+          <button onClick={()=> showNext()}>
+            Next
+          </button>
+        </div>      
       </main>
     </div>
   );
@@ -182,6 +219,7 @@ function formatResult(generatedText)
     answer: answersNew[index],
     showAnswer: false
   }));
+  console.log(resultArray);
 
   return result;
 }
