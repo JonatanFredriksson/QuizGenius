@@ -27,7 +27,10 @@ export default function Home() {
       }
 
       //setResult(data.result);
-      const formattedResult = formatResult(data.result);
+      console.log("IT starts here: " + data.result);
+      const formattedResult = formatResult(data.result); //formateringen måste nu ändras när vi ändrat datastrukturen
+      console.log("IT ends here: ");
+
       setResult(formattedResult);
       console.log("NEW LOG YIPPI: " + formattedResult);
       
@@ -64,18 +67,58 @@ export default function Home() {
   
 
   function createQAPairs(result){
-    const paragraphs = result.split(/\n\s*\n/);
+    console.log("Så här ser datan ut direkt: " + result)
+
+    const regex = /\d+\. Q: (.+)\n/g;
+    const questions = [];
+    const regexA = /\d+\. A: (.+)/g;
+
+    ;
+    const answers = [];
+    
+    let match;
+    let matchA;
     const qaPairs = [];
 
-    paragraphs.forEach((paragraph) => {
-      const lines = paragraph.split("\n");
-      if (lines.length >= 2) {
-        qaPairs.push({
-          question: lines[0],
-          answer: lines[1],
-        });
-      }
-    });
+    let resultCopy = result; // make a copy of the original string
+
+
+    while ((match = regex.exec(result)) !== null) { //fortsätter så länge den hittar ny occurance som matchar
+      questions.push(match[1]);
+      console.log("match: " + match[1])
+
+      //answers.push(match[1])
+      /*qaPairs.push({
+        question: match[1],
+        answer: match[1],
+      });
+      */
+    }
+    let matchCopy = regex.exec(result);
+    console.log("Questions  copies." + matchCopy);
+    //let matchACopy = regexA.exec(result);
+    //console.log("Answers copies: " + matchACopy);
+    resultCopy = result; // reset the copy for the second loop
+
+    while ((matchA = regexA.exec(resultCopy)) !== null) {
+      //questions.push(match[1]);
+      answers.push(matchA[1])
+      console.log("matchA: " + matchA[1])
+      console.log("Hela: " + matchA);
+    }
+    for (let i = 0; i < questions.length; i++) {
+      let j = i;
+      const subArray = [questions[i], answers[i]];
+      //qaPairs.push(subArray);
+      j++;
+      qaPairs.push({
+        question: `Question: ${j} : ${questions[i]}`,
+        answer: `Answer: ${j} : ${answers[i]}`,
+      });
+    }
+
+
+    
     console.log(qaPairs);
     return qaPairs;
   }
@@ -84,8 +127,8 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>Quiz GPT</title>
-        <link rel="icon" href="/dog.png" />
+        <title>QuizGenius</title>
+        <link rel="icon" href="/QuizGenius-Q.png" />
       </Head>
 
       <main className={styles.main}>
@@ -162,12 +205,16 @@ return completeSentences;
 
 function formatResult(generatedText)
 {
-  const regexAnswer = /A\d+: ([^A].+?)(?=Q\d+|$)/gs;
-  const answersNew = generatedText.match(regexAnswer).map(a => a.replace(/A\d+: /, ''));
+  //const regexAnswer = /A\d+: ([^A].+?)(?=Q\d+|$)/gs;
+  const regexAnswer = /^(\d+)\. (Q): (.*)$/gm;
+  const regexQuestion = /^(\d+)\. (A): (.*)$/gm; //ändrad båda för att matcha den nya strukturen
+
+
+  const answersNew = generatedText.match(regexAnswer).map(a => a.replace(/A\d+: /, '')); 
 
   console.log(generatedText);
 
-  const questionsReg= generatedText.match(/Q\d+: (.+?)\?/g).map(q => q.replace(/Q\d+: /, ''));
+  const questionsReg= generatedText.match(regexQuestion).map(q => q.replace(/Q\d+: /, ''));
   
 
   console.log("Questions från regen: " + questionsReg);
