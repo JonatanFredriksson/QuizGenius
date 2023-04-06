@@ -77,8 +77,9 @@
 }
 .main .result {
   font-weight: bold;
-  margin-top: 40px;
   white-space: pre-line;
+
+  margin: 2vh;
 }
 
 .main .buttonleft {
@@ -86,6 +87,7 @@
   background-size: 100% 100%;
   padding: 10px 20px; /* adjust as needed */
   border: none;
+  background-color: transparent;
 }
 
 .main .buttonright {
@@ -93,8 +95,14 @@
   background-size: 100% 100%;
   padding: 10px 20px; /* adjust as needed */
   border: none;
+  background-color: transparent;
+
 }
 
 
+.hideShow{
+  border: 1px solid #d34e3c;
+  background-color: #d34e3c;
+  padding: 6vh;
 
-
+}

@@ -205,18 +205,22 @@ export default function Home() {
         
         <div className={styles.result}>
           {qaPairs.length > 0 && (
-            <button onClick={() => setShowAnswers(!showAnswers)}>
+            <button className="hideShow" onClick={() => setShowAnswers(!showAnswers)}>
               {showAnswers ? "Hide Answers" : "Show Answers"}
             </button>
           )}
         </div>    
         <div className={styles.result}>
-          {!first && <button className={styles.buttonleft} onClick={()=> showPrevious()}>
-          </button>}
+          
           {currentQuestion}
           {showAnswers && <p> {currentAnswer}</p>}
+          <div class="buttons">
+          {!first && <button className={styles.buttonleft} onClick={()=> showPrevious()}>
+          </button>}
           {!last &&<button className={styles.buttonright} onClick={()=> showNext()}>
           </button>}
+          </div>
+          
         </div>      
       </main>
     </div>
