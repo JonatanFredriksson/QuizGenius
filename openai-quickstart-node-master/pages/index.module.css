@@ -81,6 +81,20 @@
   white-space: pre-line;
 }
 
+.main .buttonleft {
+  background-image: url('/arrow_left.png');
+  background-size: 100% 100%;
+  padding: 10px 20px; /* adjust as needed */
+  border: none;
+}
+
+.main .buttonright {
+  background-image: url('/arrow_right.png');
+  background-size: 100% 100%;
+  padding: 10px 20px; /* adjust as needed */
+  border: none;
+}
+
 
 
 

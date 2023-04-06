@@ -8,6 +8,11 @@ export default function Home() {
   const [amountInput, setAmountInput] = useState("");
   const [qaPairs, setQAPairs] = useState([]);
   const [showAnswers, setShowAnswers] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState("");
+  const [indexQ, setIndexQ] = useState();
+  const [currentAnswer, setCurrentAnswer] = useState("");
+  const [last, setLast] = useState();
+  const [first, setFirst] = useState();
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -47,24 +52,17 @@ export default function Home() {
 
       setAmountInput("");
       setQAPairs(createQAPairs(data.result));
+
+      console.log(qaPairs);
+
+      console.log(qaPairs[0]);
+
     } catch(error) {
       // Consider implementing your own error handling logic here
       console.error(error);
       alert(error.message);
     }
-  }
-
-
-  var processedQs = qaPairs.map((qaPair, index) => (
-    <div key={index} className={styles.qaPair}>
-
-    <p>{qaPair.question}</p>
-    {showAnswers && <p className = {styles.answer}> {qaPair.answer}</p>}
-
-    </div>
-  ));
-
-  
+  }  
 
   function createQAPairs(result){
     console.log("Så här ser datan ut direkt: " + result)
@@ -120,9 +118,40 @@ export default function Home() {
 
     
     console.log(qaPairs);
+    setIndexQ(0);
+    setCurrentQuestion(qaPairs[0].question);
+    setCurrentAnswer(qaPairs[0].answer);
+    setLast(false);
+    setFirst(true);
     return qaPairs;
   }
+  
 
+  function showNext(){
+    if (indexQ+1 < qaPairs.length){
+      setCurrentQuestion(qaPairs[indexQ+1].question);
+      setCurrentAnswer(qaPairs[indexQ+1].answer);
+      if (indexQ+1==qaPairs.length-1){
+        setLast(true);
+      }
+      setIndexQ(indexQ+1);
+      setShowAnswers(false);
+      setFirst(false);
+    }
+  }
+
+  function showPrevious(){
+    if (indexQ-1 >= 0){
+      setCurrentQuestion(qaPairs[indexQ-1].question);
+      setCurrentAnswer(qaPairs[indexQ-1].answer);
+      if (indexQ-1==0){
+        setFirst(true);
+      }
+      setIndexQ(indexQ-1);
+      setShowAnswers(false);
+      setLast(false);
+    }
+  }
 
   return (
     <div>
@@ -169,7 +198,8 @@ export default function Home() {
           />
           </div>
           
-          <input type="submit" class="submitButton" value="Generate questions" />
+          <input type="submit" class="submitButton" value="Generate questions"/>
+          
           </form>
         </div>
         
@@ -179,8 +209,15 @@ export default function Home() {
               {showAnswers ? "Hide Answers" : "Show Answers"}
             </button>
           )}
-          {processedQs}
-        </div>        
+        </div>    
+        <div className={styles.result}>
+          {!first && <button className={styles.buttonleft} onClick={()=> showPrevious()}>
+          </button>}
+          {currentQuestion}
+          {showAnswers && <p> {currentAnswer}</p>}
+          {!last &&<button className={styles.buttonright} onClick={()=> showNext()}>
+          </button>}
+        </div>      
       </main>
     </div>
   );
@@ -229,6 +266,7 @@ function formatResult(generatedText)
     answer: answersNew[index],
     showAnswer: false
   }));
+  console.log(resultArray);
 
   return result;
 }
