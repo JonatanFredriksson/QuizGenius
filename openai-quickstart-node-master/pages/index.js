@@ -10,6 +10,9 @@ export default function Home() {
   const [showAnswers, setShowAnswers] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [indexQ, setIndexQ] = useState();
+  const [currentAnswer, setCurrentAnswer] = useState("");
+  const [last, setLast] = useState();
+  const [first, setFirst] = useState();
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -56,20 +59,7 @@ export default function Home() {
       console.error(error);
       alert(error.message);
     }
-  }
-
-
-  var processedQs = qaPairs.map((qaPair, index) => (
-    <div key={index} className={styles.qaPair}>
-
-    <p>{qaPair.question}</p>
-    {showAnswers && <p className = {styles.answer}> {qaPair.answer}</p>}
-
-    </div>
-
-  ));
-
-  
+  }  
 
   function createQAPairs(result){
     const paragraphs = result.split(/\n\s*\n/);
@@ -87,24 +77,36 @@ export default function Home() {
     console.log(qaPairs);
     setIndexQ(0);
     setCurrentQuestion(qaPairs[0].question);
+    setCurrentAnswer(qaPairs[0].answer);
+    setLast(false);
+    setFirst(true);
     return qaPairs;
   }
   
 
   function showNext(){
     if (indexQ+1 < qaPairs.length){
-      console.log("new index", indexQ);
-      console.log(qaPairs.length);
       setCurrentQuestion(qaPairs[indexQ+1].question);
+      setCurrentAnswer(qaPairs[indexQ+1].answer);
+      if (indexQ+1==qaPairs.length-1){
+        setLast(true);
+      }
       setIndexQ(indexQ+1);
+      setShowAnswers(false);
+      setFirst(false);
     }
   }
 
   function showPrevious(){
     if (indexQ-1 >= 0){
-      console.log(indexQ);
       setCurrentQuestion(qaPairs[indexQ-1].question);
+      setCurrentAnswer(qaPairs[indexQ-1].answer);
+      if (indexQ-1==0){
+        setFirst(true);
+      }
       setIndexQ(indexQ-1);
+      setShowAnswers(false);
+      setLast(false);
     }
   }
 
@@ -164,16 +166,14 @@ export default function Home() {
               {showAnswers ? "Hide Answers" : "Show Answers"}
             </button>
           )}
-          {processedQs}
         </div>    
         <div className={styles.result}>
-          <button onClick={()=> showPrevious()}>
-            Previous
-          </button>
+          {!first && <button className={styles.buttonleft} onClick={()=> showPrevious()}>
+          </button>}
           {currentQuestion}
-          <button onClick={()=> showNext()}>
-            Next
-          </button>
+          {showAnswers && <p> {currentAnswer}</p>}
+          {!last &&<button className={styles.buttonright} onClick={()=> showNext()}>
+          </button>}
         </div>      
       </main>
     </div>
