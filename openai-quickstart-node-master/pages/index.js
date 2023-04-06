@@ -128,7 +128,7 @@ export default function Home() {
     <div>
       <Head>
         <title>QuizGenius</title>
-        <link rel="icon" href="/dog.png" />
+        <link rel="icon" href="/QuizGenius-Q.png" />
       </Head>
 
       <main className={styles.main}>

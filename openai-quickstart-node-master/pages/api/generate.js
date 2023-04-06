@@ -104,15 +104,23 @@ function chunkInputText(inputText, chunkLimit) {
     arr.push(sentences[i]); //vi skickar in våra sentences i array
     if (stringCounter > chunkLimit) { //chunken är tillräckligt lång och vi är klara med den
       chunkArray = chunkArray.concat(arr); //vi storar våra menignar i chunkarray
+      for(let i = 0; i<arr.length; i++){
+        console.log("Mellan arrayeN: " + arr[i]);
+      }
       arr.length = 0; //vi clearar den temporära arrayen
       stringCounter = 0; //resetar string counter
+      
     } //måte också kunna hantera om vi aldrig når upp till gränsen eftersom en person kanske lämna in en väldigt kort text och vi vill fortfarande skicka den vidare
     
   }
   if(arr.length > 0){ //vi har en sista inkomplett chunk vi behöver skicka vidare
-    chunkArray = chunkArray.concat(arr)
-    console.log("Sista arrayen: " + arr);
     
+    for(let i = arr.length-1; i>0; i--){ //det skapas en tom sträng i slutet på sista arrayen/chunken så vi tar bort den med splice
+      if(arr[i] === ''){
+        arr.splice(i, 1);
+      }
+    }
+    chunkArray = chunkArray.concat(arr)
 
   }
   
