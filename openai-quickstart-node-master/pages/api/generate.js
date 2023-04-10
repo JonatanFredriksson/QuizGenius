@@ -77,7 +77,7 @@ function quizMePrompt(input, amount) {
     return '';
   }
   else {
-    return `Give me ${amount} questions and corresponding answers on the following: ${input}, in the format of Q: questions A: answer`;
+    return `Give me ${amount} questions and corresponding answers on the following: ${input}, in the format of Q: questions A: answer, answer in the language similar to the provided notes`;
 
   }
 

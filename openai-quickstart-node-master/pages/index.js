@@ -71,7 +71,7 @@ export default function Home() {
     const questions = [];
     const regexA = /\d+\. A: (.+)/g;
 
-    ;
+    ; //ta bort
     const answers = [];
     
     let match;
@@ -205,7 +205,7 @@ export default function Home() {
         
         <div className={styles.result1}>
           {qaPairs.length > 0 && (
-            <button onClick={() => setShowAnswers(!showAnswers)}>
+            <button className="hideShow" onClick={() => setShowAnswers(!showAnswers)}>
               {showAnswers ? "Hide Answers" : "Show Answers"}
             </button>
           )}
@@ -223,6 +223,7 @@ export default function Home() {
           <div className={styles.containerRightArrow}>
             {!last &&<button className={styles.buttonright} onClick={()=> showNext()}></button>}
           </div>    
+
         </div>      
       </main>
     </div>

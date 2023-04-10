@@ -77,8 +77,9 @@
 }
 .main .result1 {
   font-weight: bold;
-  margin-top: 40px;
   white-space: pre-line;
+
+  margin: 2vh;
 }
 
 .main .result2 {
@@ -99,7 +100,6 @@
   border: none;
   background-color: transparent;
 
-}
 
 .main .buttonright {
   background-image: url('/arrow_right.png');
@@ -108,7 +108,6 @@
   border: none;
   background-color: transparent;
 
-}
 .main .questionAndAnswer {
   width: 300px;
   display: inline-block;
@@ -143,7 +142,4 @@
 .main .answer {
   margin-bottom: 0px;
 }
-
-
-
 
