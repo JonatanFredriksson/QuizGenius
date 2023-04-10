@@ -75,11 +75,22 @@
   cursor: pointer;
   margin: initial;
 }
-.main .result {
+.main .result1 {
   font-weight: bold;
   white-space: pre-line;
 
   margin: 2vh;
+}
+
+.main .result2 {
+  font-weight: bold;
+  margin-top: 40px;
+  margin-bottom: 100px;
+  white-space: pre-line;
+  width: 550px;
+  vertical-align: middle;
+  text-align: center;
+  position: relative;
 }
 
 .main .buttonleft {
@@ -88,7 +99,7 @@
   padding: 10px 20px; /* adjust as needed */
   border: none;
   background-color: transparent;
-}
+
 
 .main .buttonright {
   background-image: url('/arrow_right.png');
@@ -97,12 +108,38 @@
   border: none;
   background-color: transparent;
 
+.main .questionAndAnswer {
+  width: 300px;
+  display: inline-block;
+  border: #000000;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 25px;
+  padding: 20px;
+  margin: 0px 40px 0px 40px;
 }
 
-
-.hideShow{
-  border: 1px solid #d34e3c;
-  background-color: #d34e3c;
-  padding: 6vh;
-
+.main .containerLeftArrow {
+  justify-content: center;
+  display: inline-block;
+  vertical-align: middle; 
+  position: absolute;
+  -webkit-transform: translate(-50%, -50%);  
+  transform: translate(-50%, -50%);
+  top: 50%;
 }
+
+.main .containerRightArrow {
+  justify-content: center;
+  display: inline-block;
+  vertical-align: middle;
+  position: absolute;
+  -webkit-transform: translate(-50%, -50%);  
+  transform: translate(-50%, -50%);
+  top: 50%;
+}
+
+.main .answer {
+  margin-bottom: 0px;
+}
+

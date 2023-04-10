@@ -71,7 +71,7 @@ export default function Home() {
     const questions = [];
     const regexA = /\d+\. A: (.+)/g;
 
-    ;
+    ; //ta bort
     const answers = [];
     
     let match;
@@ -203,24 +203,27 @@ export default function Home() {
           </form>
         </div>
         
-        <div className={styles.result}>
+        <div className={styles.result1}>
           {qaPairs.length > 0 && (
             <button className="hideShow" onClick={() => setShowAnswers(!showAnswers)}>
               {showAnswers ? "Hide Answers" : "Show Answers"}
             </button>
           )}
         </div>    
-        <div className={styles.result}>
-          
-          {currentQuestion}
-          {showAnswers && <p> {currentAnswer}</p>}
-          <div class="buttons">
-          {!first && <button className={styles.buttonleft} onClick={()=> showPrevious()}>
-          </button>}
-          {!last &&<button className={styles.buttonright} onClick={()=> showNext()}>
-          </button>}
+        <div className={styles.result2}>
+          <div className={styles.containerLeftArrow}>
+            {!first && <button className={styles.buttonleft} onClick={()=> showPrevious()}> </button>}
           </div>
-          
+
+          <div className={styles.questionAndAnswer}>
+            {currentQuestion}
+            {showAnswers && <p className={styles.answer}> {currentAnswer}</p>}
+          </div>
+
+          <div className={styles.containerRightArrow}>
+            {!last &&<button className={styles.buttonright} onClick={()=> showNext()}></button>}
+          </div>    
+
         </div>      
       </main>
     </div>
