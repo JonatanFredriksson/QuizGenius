@@ -26,6 +26,14 @@ export default async function (req, res) {
   }
 
   const amount = req.body.amount || '';
+  if(amount <= 0){
+    res.status(400).json({
+      error: {
+        message: "Please enter an amount bigger than 0",
+      }
+    });
+    return;
+  }
   /*
   const animal = req.body.animal || '';
   if (animal.trim().length === 0) {

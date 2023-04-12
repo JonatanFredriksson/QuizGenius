@@ -99,7 +99,7 @@
   padding: 10px 20px; /* adjust as needed */
   border: none;
   background-color: transparent;
-
+}
 
 .main .buttonright {
   background-image: url('/arrow_right.png');
@@ -107,6 +107,7 @@
   padding: 10px 20px; /* adjust as needed */
   border: none;
   background-color: transparent;
+}
 
 .main .questionAndAnswer {
   width: 300px;
