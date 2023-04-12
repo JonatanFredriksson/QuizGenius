@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useState } from "react";
 import styles from "./index.module.css";
+import localforage from "localforage";
 
 export default function Home() {
   const [textInput, setTextInput] = useState("");
@@ -14,6 +15,12 @@ export default function Home() {
   const [last, setLast] = useState();
   const [first, setFirst] = useState();
 
+  // If using a module bundler like Webpack or Babel
+const localforage = require('localforage');
+
+// If including via CDN in an HTML file
+<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+retrieveData();
   async function onSubmit(event) {
     event.preventDefault();
     try {
@@ -123,6 +130,8 @@ export default function Home() {
     setCurrentAnswer(qaPairs[0].answer);
     setLast(false);
     setFirst(true);
+
+    storeData(qaPairs);
     return qaPairs;
   }
   
@@ -277,3 +286,32 @@ function formatResult(generatedText)
 
   return result;
 }
+
+
+function storeData(qaPairs){
+
+  localforage.setItem('qaPairs', qaPairs)
+  .then(() => {
+    console.log("Array stored!");
+
+  })
+  .catch((error) => {
+    console.error('Error storing: ' , error);
+  });
+
+
+
+}
+
+
+function retrieveData(){
+
+localforage.getItem('qaPairs')
+  .then((storedQAPairs) => {
+    console.log('Retrieved qaPairs: ', storedQAPairs)
+  })
+  .catch((error) => {
+    console.error('Error retrieving data: ', error)
+  });
+}
+

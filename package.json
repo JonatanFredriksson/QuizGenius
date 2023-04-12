@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "jquery": "^3.6.4"
+    "jquery": "^3.6.4",
+    "localforage": "^1.10.0"
   }
 }

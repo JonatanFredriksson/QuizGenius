@@ -100,14 +100,14 @@
   border: none;
   background-color: transparent;
 
-
+}
 .main .buttonright {
   background-image: url('/arrow_right.png');
   background-size: 100% 100%;
   padding: 10px 20px; /* adjust as needed */
   border: none;
   background-color: transparent;
-
+}
 .main .questionAndAnswer {
   width: 300px;
   display: inline-block;
