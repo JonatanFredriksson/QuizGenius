@@ -57,7 +57,7 @@
   margin-bottom: 24px;
   outline-color: #d34e3c;
   width: 80vh;
-  height: 10vh;
+  height: auto;
   display: block;
   resize: none;
 }
@@ -100,6 +100,7 @@
   border: none;
   background-color: transparent;
 }
+
 
 .main .buttonright {
   background-image: url('/arrow_right.png');

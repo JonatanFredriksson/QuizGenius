@@ -54,7 +54,7 @@ export default async function (req, res) {
       return openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
-        temperature: 0.3,
+        temperature: 0.1,
         max_tokens: 2000,
         n: 1,
       });

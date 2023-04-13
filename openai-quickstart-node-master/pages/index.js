@@ -173,17 +173,19 @@ export default function Home() {
           <form onSubmit={onSubmit}>
           <div class="textAreaInput">
           <textarea 
+            id = "thetextbox"
             class="text-input" 
             type = "text"
             placeholder="Type your text: "
             rows="4" 
             cols="50"
-            onInput={(e) => {
-              e.target.style.height = "auto";
+            height= "auto"
+            value={textInput}
+            onChange={(e) => {
+              setTextInput(e.target.value);
+              //e.target.style.height = "auto";
               e.target.style.height = e.target.scrollHeight + "px";
             }}
-            value={textInput}
-            onChange={(e) => setTextInput(e.target.value)}
           ></textarea>
         </div>
           
@@ -198,7 +200,12 @@ export default function Home() {
           />
           </div>
           
-          <input type="submit" class="submitButton" value="Generate questions"/>
+          <input 
+          type="submit" 
+          class="submitButton" 
+          value="Generate questions"
+          onClick={handleBoxSize}
+          />
           
           </form>
         </div>
@@ -243,7 +250,10 @@ const completeSentences = sentences.filter(sentence => {
 return completeSentences;
 }
 
-
+function handleBoxSize() {
+  var myBox = document.getElementById("thetextbox");
+  myBox.style.height = "auto";
+}
 
 
 
