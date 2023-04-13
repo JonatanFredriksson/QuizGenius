@@ -13,6 +13,13 @@ export default function Home() {
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [last, setLast] = useState();
   const [first, setFirst] = useState();
+  const localforage = require('localforage');
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    
+  
+
+  TryToRetrieve();
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -104,7 +111,7 @@ export default function Home() {
       console.log("matchA: " + matchA[1])
       console.log("Hela: " + matchA);
     }
-    for (let i = 0; i < questions.length; i++) {
+    for (let i = 0; i < questions.length; i++) { 
       let j = i;
       const subArray = [questions[i], answers[i]];
       //qaPairs.push(subArray);
@@ -276,4 +283,13 @@ function formatResult(generatedText)
   console.log(resultArray);
 
   return result;
+}
+
+function TryToRetrieve(QAPairs){
+
+localforage.setItem('QAPairs', QAPairs)
+.then(( ) => {
+  console.log('Array ')
+})
+
 }

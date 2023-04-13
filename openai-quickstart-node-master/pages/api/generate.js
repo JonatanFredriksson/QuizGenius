@@ -169,7 +169,7 @@ function formatResult(generatedText, amount) { //tar in amount eftersom vi vill 
 
   console.log(generatedText);
   // loop through each question-answer pair and format them
-  for (let i = 0; i < amount; i++) {
+  for (let i = 0; i < amount; i++) { //vi fyler bara på med så många som krävs
     const question = splitText[i * 2]; // 0..2..4..
     const answer = splitText[i * 2 + 1]; //1..3..5
 
@@ -181,6 +181,14 @@ function formatResult(generatedText, amount) { //tar in amount eftersom vi vill 
   // combine the formatted questions and answers into a single string
   const formattedOutput = `Generated Questions:\n\n${formattedQuestions.join("\n")}\n\nGenerated Answers:\n\n${formattedAnswers.join("\n")}`;
   console.log("KORREKTA: ______" + formattedOutput)
+  SaveToLocalStorage(formattedOutput); //vi skickar iväg datan för att lagras i localstorage
   return formattedOutput;
 }
 
+function SaveToLocalStorage(QAPairs){
+  const fs = require('fs');
+
+  const saving = JSON.stringify(QAPairs);
+//localStorage.setItem('QAPairs', saving);
+fs.writeFileSync('QAPairs', saving);
+}
