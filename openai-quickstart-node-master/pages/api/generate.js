@@ -137,19 +137,6 @@ function questionPerChunk(inputChunks, amountOfQuestions) { //fördela antalet q
 
 }
 
-function trimUnfinishedSentences(generatedText) {
-
-  // vi får flerea meningar - split into sentences
-  const sentences = generatedText.match(/[^.?!\n]+[.?!\n]+/g) || [];
-
-  // ta bort inkomplettea meningar, remove sentences not ending in . ? !
-  const completeSentences = sentences.filter(sentence => {
-    const trimmedSentence = sentence.trim();
-    return trimmedSentence.length > 0 && trimmedSentence.charAt(trimmedSentence.length - 1).match(/[.?!]/);
-  });
-  return completeSentences;
-}
-
 function formatResult(generatedText, amount) { //tar in amount eftersom vi vill endast skapa så många frågor + svar som användaren satte
   // split the text into an array of questions and answers
   console.log("Innan splittext: " + generatedText);
@@ -158,6 +145,8 @@ function formatResult(generatedText, amount) { //tar in amount eftersom vi vill 
   const numQuestions = splitText.length / 2;
   const formattedQuestions = [];
   const formattedAnswers = [];
+
+  let sendMeToIndex = [];
 
   console.log(generatedText);
   // loop through each question-answer pair and format them
@@ -168,11 +157,31 @@ function formatResult(generatedText, amount) { //tar in amount eftersom vi vill 
     formattedQuestions.push(`${i + 1}. ${question}`);
     formattedAnswers.push(`${i + 1}. ${answer}`);
     console.log("KLOCK: " + i);
+
+    var qaPair = {
+      question: i, question,
+      answer: i, answer,
+      ShowAnswer: false
+
+    };
+
+    sendMeToIndex.push(qaPair);
+
+    /*
+    sendMeToIndex.push({
+      question: `Question: ${i} : ${question}`,
+      answer: `Answer: ${i} : ${answer}`,
+    });'
+    */
   }
 
   // combine the formatted questions and answers into a single string
-  const formattedOutput = `Generated Questions:\n\n${formattedQuestions.join("\n")}\n\nGenerated Answers:\n\n${formattedAnswers.join("\n")}`;
-  console.log("KORREKTA: ______" + formattedOutput)
-  return formattedOutput;
+  //const formattedOutput = `Generated Questions:\n\n${formattedQuestions.join("\n")}\n\nGenerated Answers:\n\n${formattedAnswers.join("\n")}`;
+  //console.log("KORREKTA: ______" + formattedOutput)
+
+  //istället för att returna en string, reuturna en array som är i rätt format
+
+
+  return sendMeToIndex;
 }
 

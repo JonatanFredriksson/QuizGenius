@@ -8,12 +8,14 @@ export default function Home() {
   const [result, setResult] = useState();
   const [amountInput, setAmountInput] = useState("");
   const [qaPairs, setQAPairs] = useState([]);
+  
   const [showAnswers, setShowAnswers] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [indexQ, setIndexQ] = useState();
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [last, setLast] = useState();
   const [first, setFirst] = useState();
+  
 
   // If using a module bundler like Webpack or Babel
 const localforage = require('localforage');
@@ -40,25 +42,36 @@ retrieveData();
 
       //setResult(data.result);
       console.log("IT starts here: " + data.result);
-      const formattedResult = formatResult(data.result); //formateringen måste nu ändras när vi ändrat datastrukturen
+      const formattedResult = (data.result); //formateringen måste nu ändras när vi ändrat datastrukturen, vi skippar detta steg, formatterar i generate istället
       console.log("IT ends here: ");
+
+
+
+      setQAPairs(data.result);
+      console.log(qaPairs);
+      setIndexQ(0);
+      setCurrentQuestion(qaPairs[0].question);
+      setCurrentAnswer(qaPairs[0].answer);
+      setLast(false);
+      setFirst(true);
+  
 
       setResult(formattedResult);
       console.log("NEW LOG YIPPI: " + formattedResult);
       
       //ny metod som splittar upp i questions answers i array så att vi kan iterera varje steg för steg och sätta upp form och buttons för interaktion
-      const test = trimUnfinishedSentences(data.result);
+      const test = (data.result);
       console.log(test);
       
 
-      console.log(trimUnfinishedSentences(data.result));
+      //console.log(trimUnfinishedSentences(data.result)); //fungerar inte just nu med arrayen
       setTextInput("");
-      let arr = formatResult(data.result);
+      let arr = (data.result);
       console.log(arr);
 
 
       setAmountInput("");
-      setQAPairs(createQAPairs(data.result));
+      setQAPairs(data.result);
 
       console.log(qaPairs);
 
@@ -71,6 +84,21 @@ retrieveData();
     }
   }  
 
+
+function createQAPairs(genereateArr){
+
+
+  for (let i = 0; i < genereateArr.length; i++) {
+
+  }
+
+  qaPairs.push({
+    question: `Question: ${j} : ${questions[i]}`,
+    answer: `Answer: ${j} : ${answers[i]}`,
+  });
+
+}
+  /*
   function createQAPairs(result){
     console.log("Så här ser datan ut direkt: " + result)
 
@@ -93,11 +121,7 @@ retrieveData();
       console.log("match: " + match[1])
 
       //answers.push(match[1])
-      /*qaPairs.push({
-        question: match[1],
-        answer: match[1],
-      });
-      */
+      
     }
     let matchCopy = regex.exec(result);
     console.log("Questions  copies." + matchCopy);
@@ -134,7 +158,7 @@ retrieveData();
     storeData(qaPairs);
     return qaPairs;
   }
-  
+  */
 
   function showNext(){
     if (indexQ+1 < qaPairs.length){
@@ -239,7 +263,7 @@ retrieveData();
   );
 }
 
-function trimUnfinishedSentences(generatedText){
+/*function trimUnfinishedSentences(generatedText){
 
 // Match the end of sentences and split the output into sentences
 const sentences = generatedText.match(/[^.?!\n]+[.?!\n]+/g) || [];
@@ -251,12 +275,12 @@ const completeSentences = sentences.filter(sentence => {
 });
 return completeSentences;
 }
+*/
 
 
 
 
-
-function formatResult(generatedText)
+function formatResult(generatedText) //Should not be necessary
 {
   //const regexAnswer = /A\d+: ([^A].+?)(?=Q\d+|$)/gs;
   const regexAnswer = /^(\d+)\. (Q): (.*)$/gm;
