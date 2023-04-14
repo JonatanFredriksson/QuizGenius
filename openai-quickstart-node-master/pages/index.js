@@ -30,102 +30,22 @@ export default function Home() {
       if (response.status !== 200) {
         throw data.error || new Error(`Request failed with status ${response.status}`);
       }
-
-      //setResult(data.result);
-      console.log("IT starts here: " + data.result);
-      const formattedResult = formatResult(data.result); //formateringen måste nu ändras när vi ändrat datastrukturen
-      console.log("IT ends here: ");
-
-      setResult(formattedResult);
-      console.log("NEW LOG YIPPI: " + formattedResult);
-      
-      //ny metod som splittar upp i questions answers i array så att vi kan iterera varje steg för steg och sätta upp form och buttons för interaktion
-      const test = trimUnfinishedSentences(data.result);
-      console.log(test);
-      
-
-      console.log(trimUnfinishedSentences(data.result));
+      setQAPairs(data.result);
       setTextInput("");
-      let arr = formatResult(data.result);
-      console.log(arr);
-
-
       setAmountInput("");
-      setQAPairs(createQAPairs(data.result));
 
-      console.log(qaPairs);
-
-      console.log(qaPairs[0]);
+      setIndexQ(0);
+      setCurrentQuestion(data.result[0].question);
+      setCurrentAnswer(data.result[0].answer);
+      setLast(false);
+      setFirst(true);
 
     } catch(error) {
       // Consider implementing your own error handling logic here
       console.error(error);
       alert(error.message);
     }
-  }  
-
-  function createQAPairs(result){
-    console.log("Så här ser datan ut direkt: " + result)
-
-    const regex = /\d+\. Q: (.+)\n/g;
-    const questions = [];
-    const regexA = /\d+\. A: (.+)/g;
-
-    ; //ta bort
-    const answers = [];
-    
-    let match;
-    let matchA;
-    const qaPairs = [];
-
-    let resultCopy = result; // make a copy of the original string
-
-
-    while ((match = regex.exec(result)) !== null) { //fortsätter så länge den hittar ny occurance som matchar
-      questions.push(match[1]);
-      console.log("match: " + match[1])
-
-      //answers.push(match[1])
-      /*qaPairs.push({
-        question: match[1],
-        answer: match[1],
-      });
-      */
-    }
-    let matchCopy = regex.exec(result);
-    console.log("Questions  copies." + matchCopy);
-    //let matchACopy = regexA.exec(result);
-    //console.log("Answers copies: " + matchACopy);
-    resultCopy = result; // reset the copy for the second loop
-
-    while ((matchA = regexA.exec(resultCopy)) !== null) {
-      //questions.push(match[1]);
-      answers.push(matchA[1])
-      console.log("matchA: " + matchA[1])
-      console.log("Hela: " + matchA);
-    }
-    for (let i = 0; i < questions.length; i++) {
-      let j = i;
-      const subArray = [questions[i], answers[i]];
-      //qaPairs.push(subArray);
-      j++;
-      qaPairs.push({
-        question: `Question: ${j} : ${questions[i]}`,
-        answer: `Answer: ${j} : ${answers[i]}`,
-      });
-    }
-
-
-    
-    console.log(qaPairs);
-    setIndexQ(0);
-    setCurrentQuestion(qaPairs[0].question);
-    setCurrentAnswer(qaPairs[0].answer);
-    setLast(false);
-    setFirst(true);
-    return qaPairs;
-  }
-  
+  }    
 
   function showNext(){
     if (indexQ+1 < qaPairs.length){
@@ -183,7 +103,7 @@ export default function Home() {
             value={textInput}
             onChange={(e) => {
               setTextInput(e.target.value);
-              //e.target.style.height = "auto";
+              e.target.style.height = "auto";
               e.target.style.height = e.target.scrollHeight + "px";
             }}
           ></textarea>
@@ -237,53 +157,7 @@ export default function Home() {
   );
 }
 
-function trimUnfinishedSentences(generatedText){
-
-// Match the end of sentences and split the output into sentences
-const sentences = generatedText.match(/[^.?!\n]+[.?!\n]+/g) || [];
-
-// Filter out incomplete sentences
-const completeSentences = sentences.filter(sentence => {
-  const trimmedSentence = sentence.trim();
-  return trimmedSentence.length > 0 && trimmedSentence.charAt(trimmedSentence.length - 1).match(/[.?!]/);
-});
-return completeSentences;
-}
-
 function handleBoxSize() {
   var myBox = document.getElementById("thetextbox");
   myBox.style.height = "auto";
-}
-
-
-
-function formatResult(generatedText)
-{
-  //const regexAnswer = /A\d+: ([^A].+?)(?=Q\d+|$)/gs;
-  const regexAnswer = /^(\d+)\. (Q): (.*)$/gm;
-  const regexQuestion = /^(\d+)\. (A): (.*)$/gm; //ändrad båda för att matcha den nya strukturen
-
-
-  const answersNew = generatedText.match(regexAnswer).map(a => a.replace(/A\d+: /, '')); 
-
-  console.log(generatedText);
-
-  const questionsReg= generatedText.match(regexQuestion).map(q => q.replace(/Q\d+: /, ''));
-  
-
-  console.log("Questions från regen: " + questionsReg);
-  console.log("Answers från regen: " + answersNew);
-
-  const formattedQuestions = questionsReg.join('\n\n');
-  const formattedAnswers = answersNew.join('\n\n');
-  const result = `Generated Questions: \n\n${formattedQuestions}\n\nGenerated Answers:\n\n${formattedAnswers}`;
-
-  const resultArray = questionsReg.map((question, index) => ({
-    question,
-    answer: answersNew[index],
-    showAnswer: false
-  }));
-  console.log(resultArray);
-
-  return result;
 }
