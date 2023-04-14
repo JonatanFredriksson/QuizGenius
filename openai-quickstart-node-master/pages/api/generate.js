@@ -1,4 +1,12 @@
 import { Configuration, OpenAIApi } from "openai";
+import localforage from "localforage";
+
+// If using a module bundler like Webpack or Babel
+//const localforage = require('localforage'); //för att stora i local
+
+// If including via CDN in an HTML file
+<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+retrieveData();
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -89,41 +97,40 @@ function chunkInputText(inputText, chunkLimit) {
 
   //splitta hela inputText där det finns punkter
   const sentences = inputText.split(/[.!?]+\s*/); //splittar vid slutet på en mening
-
-
   let chunkArray = [];
   let arr = [];
-
   let stringCounter = 0;
-
-  
   for (let i = 0; i < sentences.length; i++) { //loopa igenom hela sentences arrayen
 
+    console.log("Chunkbit: " + sentences[i]);
 
     stringCounter = stringCounter + sentences[i].length; //vi har en string counter för att räkna hur långa alla strängarna i arrayen är tillsammsn
     arr.push(sentences[i]); //vi skickar in våra sentences i array
     if (stringCounter > chunkLimit) { //chunken är tillräckligt lång och vi är klara med den
-      chunkArray = chunkArray.concat(arr); //vi storar våra menignar i chunkarray
-      for(let i = 0; i<arr.length; i++){
-        console.log("Mellan arrayeN: " + arr[i]);
-      }
-      arr.length = 0; //vi clearar den temporära arrayen
+      chunkArray.push(arr); //stora meningarna i nya arrayen som är för HELA chunken
+      arr = []; // Reset arr to an empty array
+
+      console.log("Slut");
+      //arr.length = 0; //vi clearar den temporära arrayen
       stringCounter = 0; //resetar string counter
-      
+
     } //måte också kunna hantera om vi aldrig når upp till gränsen eftersom en person kanske lämna in en väldigt kort text och vi vill fortfarande skicka den vidare
-    
   }
-  if(arr.length > 0){ //vi har en sista inkomplett chunk vi behöver skicka vidare
-    
-    for(let i = arr.length-1; i>0; i--){ //det skapas en tom sträng i slutet på sista arrayen/chunken så vi tar bort den med splice
-      if(arr[i] === ''){
+
+  for(let i = 0; i<chunkArray.length; i++){
+    console.log("Whole chunk: " + i + chunkArray[i]);
+  }
+  if (arr.length > 0) { //vi har en sista inkomplett chunk vi behöver skicka vidare
+
+    for (let i = arr.length - 1; i > 0; i--) { //det skapas en tom sträng i slutet på sista arrayen/chunken så vi tar bort den med splice
+      if (arr[i] === '') {
         arr.splice(i, 1);
       }
     }
     chunkArray = chunkArray.concat(arr)
 
   }
-  
+
   console.log(chunkArray);
   console.log("CHUNKY MONKY");
   return chunkArray;
@@ -181,7 +188,37 @@ function formatResult(generatedText, amount) { //tar in amount eftersom vi vill 
 
   //istället för att returna en string, reuturna en array som är i rätt format
 
+  storeData(sendMeToIndex); //vi spara vår data
 
   return sendMeToIndex;
+}
+
+//Localforage//Localstorage
+
+function storeData(qaPairs) {
+
+  localforage.setItem('qaPairs', qaPairs)
+    .then(() => {
+      console.log("Array stored!");
+
+    })
+    .catch((error) => {
+      console.error('Error storing: ', error);
+    });
+
+
+
+}
+
+
+function retrieveData() {
+
+  localforage.getItem('qaPairs')
+    .then((storedQAPairs) => {
+      console.log('Retrieved qaPairs: ', storedQAPairs)
+    })
+    .catch((error) => {
+      console.error('Error retrieving data: ', error)
+    });
 }
 
