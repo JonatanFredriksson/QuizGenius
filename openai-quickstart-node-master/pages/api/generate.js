@@ -46,11 +46,12 @@ export default async function (req, res) {
   }
 */
   try {
-    const inputChunks = chunkInputText(inputText, 250); // break input into 250-character chunks
+    const inputChunks = chunkInputText(inputText, 500); // break input into 250-character chunks
     const nrOfQuestionsToGenerate = questionPerChunk(inputChunks, amount);
     const completionPromises = inputChunks.map(chunk => {
       const prompt = quizMePrompt(chunk, nrOfQuestionsToGenerate); // vi skapar en prompt för varje chunk, det kan bli för många frågor då får vi rensa senare
-      console.log(nrOfQuestionsToGenerate)
+      console.log("Detta är chunken vi skickar in i prompt: " + chunk);
+      console.log("Detta är antalet frågor som chunken ska besvara: " + nrOfQuestionsToGenerate);
       return openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
@@ -61,9 +62,9 @@ export default async function (req, res) {
     });
     const completions = await Promise.all(completionPromises);
     const generatedTexts = completions.map(completion => completion.data.choices[0].text);
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     console.log("alla skapade outputs: " + generatedTexts);
     const formattedResult = formatResult(generatedTexts.join('\n'), amount); // alla strängarna i arrayen slängs ihop och skickas iväg som ett argument
+    
     res.status(200).json({ result: formattedResult });
   } catch (error) {
     // Consider adjusting the error handling logic for your use case
@@ -85,7 +86,7 @@ function quizMePrompt(input, amount) {
     return '';
   }
   else {
-    return `Give me ${amount} questions and corresponding answers on the following: ${input}, in the format of Q: questions A: answer, answer in the language similar to the provided notes`;
+    return `Give me ${amount} questions and corresponding answers on the following: ${input}, in the format of Q: questions A: answer, answer in the language similar to the provided notes. Example Output: Q: What is the capital of France? A: The capital of France is Paris.`;
 
   }
 
@@ -96,30 +97,54 @@ function quizMePrompt(input, amount) {
 function chunkInputText(inputText, chunkLimit) {
 
   //splitta hela inputText där det finns punkter
-  const sentences = inputText.split(/[.!?]+\s*/); //splittar vid slutet på en mening
+  //const sentences = inputText.split(/[.!?]+\s*/); //splittar vid slutet på en mening
+  const sentences = inputText.split(/[.!?]+\s*|\n+/); //splittar vid 0 ! ? och newline eftersom antecknignar ofta inte har punkter utan 
+
   let chunkArray = [];
   let arr = [];
   let stringCounter = 0;
   for (let i = 0; i < sentences.length; i++) { //loopa igenom hela sentences arrayen
 
-    console.log("Chunkbit: " + sentences[i]);
 
-    stringCounter = stringCounter + sentences[i].length; //vi har en string counter för att räkna hur långa alla strängarna i arrayen är tillsammsn
-    arr.push(sentences[i]); //vi skickar in våra sentences i array
-    if (stringCounter > chunkLimit) { //chunken är tillräckligt lång och vi är klara med den
-      chunkArray.push(arr); //stora meningarna i nya arrayen som är för HELA chunken
-      arr = []; // Reset arr to an empty array
+    if(sentences[i] === ''){
+      console.log("Den är tom chunkbit" + sentences[i]);
+    }
+    else{
+      console.log("Chunkbit: " + sentences[i]);
 
-      console.log("Slut");
-      //arr.length = 0; //vi clearar den temporära arrayen
-      stringCounter = 0; //resetar string counter
+      stringCounter = stringCounter + sentences[i].length; //vi har en string counter för att räkna hur långa alla strängarna i arrayen är tillsammsn
+      arr.push(sentences[i]); //vi skickar in våra sentences i array
+      if (stringCounter > chunkLimit) { //chunken är tillräckligt lång och vi är klara med den
+        chunkArray.push(arr); //stora meningarna i nya arrayen som är för HELA chunken
+        arr = []; // Reset arr to an empty array
+  
+        console.log("Slut");
+        //arr.length = 0; //vi clearar den temporära arrayen
+        stringCounter = 0; //resetar string counter
+  
+      } //måte också kunna hantera om vi aldrig når upp till gränsen eftersom en person kanske lämna in en väldigt kort text och vi vill fortfarande skicka den vidare
+      
 
-    } //måte också kunna hantera om vi aldrig når upp till gränsen eftersom en person kanske lämna in en väldigt kort text och vi vill fortfarande skicka den vidare
+
+    }
+
+    
+  }
+
+  
+
+  if(arr.length > 0){ //vi har kvar en chunk som sista som ska läggas till, too keep it simple så inkluderar vi den i föregående chunken
+    //chunkArray.push(arr);
+    console.log("Vi pushar sista chunken" + arr)
+    chunkArray[chunkArray.length - 1] = [...chunkArray[chunkArray.length - 1], ...arr];
+
   }
 
   for(let i = 0; i<chunkArray.length; i++){
     console.log("Whole chunk: " + i + chunkArray[i]);
   }
+
+  /*
   if (arr.length > 0) { //vi har en sista inkomplett chunk vi behöver skicka vidare
 
     for (let i = arr.length - 1; i > 0; i--) { //det skapas en tom sträng i slutet på sista arrayen/chunken så vi tar bort den med splice
@@ -130,7 +155,7 @@ function chunkInputText(inputText, chunkLimit) {
     chunkArray = chunkArray.concat(arr)
 
   }
-
+*/
   console.log(chunkArray);
   console.log("CHUNKY MONKY");
   return chunkArray;
