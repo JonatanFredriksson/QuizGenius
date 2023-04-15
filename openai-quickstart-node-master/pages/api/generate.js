@@ -48,21 +48,31 @@ export default async function (req, res) {
   try {
     const inputChunks = chunkInputText(inputText, 500); // break input into 250-character chunks
     const nrOfQuestionsToGenerate = questionPerChunk(inputChunks, amount);
-    const completionPromises = inputChunks.map(chunk => {
+    console.log("Antalet gånger: " + inputChunks.length);
+    const completionPromises = inputChunks.map(chunk => { //Vi verkar endast utföra loopen fyran gånger
       const prompt = quizMePrompt(chunk, nrOfQuestionsToGenerate); // vi skapar en prompt för varje chunk, det kan bli för många frågor då får vi rensa senare
       console.log("Detta är chunken vi skickar in i prompt: " + chunk);
       console.log("Detta är antalet frågor som chunken ska besvara: " + nrOfQuestionsToGenerate);
+      console.log("Prompten: " + prompt);
       return openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
         temperature: 0.3,
-        max_tokens: 2000,
+        max_tokens: 3000,
         n: 1,
       });
     });
     const completions = await Promise.all(completionPromises);
+    console.log("HELA: " + completions);
+    
+    
+
+    
+    
+
     const generatedTexts = completions.map(completion => completion.data.choices[0].text);
     console.log("alla skapade outputs: " + generatedTexts);
+    
     const formattedResult = formatResult(generatedTexts.join('\n'), amount); // alla strängarna i arrayen slängs ihop och skickas iväg som ett argument
     
     res.status(200).json({ result: formattedResult });
@@ -83,10 +93,16 @@ export default async function (req, res) {
 }
 function quizMePrompt(input, amount) {
   if (amount == 0) { //kommer dock aldrig hända om man inte ger 0 som input
+    console.log("WARNING!!!!!!");
     return '';
+    
+  }
+  if(amount == 1){
+    return `Give me ${amount} question and corresponding answer on the a specific text, in the format of, \nQ: question \nA: answer. \nTry to answer in the same language as the provided notes. Example Output: \nQ: What is the capital of France?\nA: The capital of France is Paris. \nThe following is the text to analyze: ${input} \n:END OF INPUT TEXT TO ANALYZE`;
+
   }
   else {
-    return `Give me ${amount} questions and corresponding answers on the following: ${input}, in the format of Q: questions A: answer, answer in the language similar to the provided notes. Example Output: Q: What is the capital of France? A: The capital of France is Paris.`;
+    return `Give me ${amount} questions and corresponding answers on the a specific text, in the format of: \nQ: question \nA: answer. \nTry to answer in the same language as the provided notes. Example Output: \nQ: What is the capital of France?\nA: The capital of France is Paris. \nQ: What is the capital of Germany?\nA: The capital of Germany is Berlin.\nThe following is the text to analyze: ${input} \n:END OF INPUT TEXT TO ANALYZE`;
 
   }
 
@@ -133,10 +149,18 @@ function chunkInputText(inputText, chunkLimit) {
 
   
 
-  if(arr.length > 0){ //vi har kvar en chunk som sista som ska läggas till, too keep it simple så inkluderar vi den i föregående chunken
+  if(arr.length > 0 && chunkArray[chunkArray.length] !== undefined){ //vi har kvar en chunk som sista som ska läggas till, too keep it simple så inkluderar vi den i föregående chunken
     //chunkArray.push(arr);
-    console.log("Vi pushar sista chunken" + arr)
+    console.log("Vi pushar sista chunken" + chunkArray.length);
     chunkArray[chunkArray.length - 1] = [...chunkArray[chunkArray.length - 1], ...arr];
+
+  }
+  else if(arr.length > 0){ //vi har kvar en chunk som sista som ska läggas till, too keep it simple så inkluderar vi den i föregående chunken, men i denn if så finns det ingen föregående så vi endast pushar
+    //chunkArray.push(arr);
+    console.log("Vi pushar sista chunken X" + arr);
+    //chunkArray[chunkArray.length - 1] = [...chunkArray[chunkArray.length - 1], ...arr];
+
+    chunkArray.push(arr);
 
   }
 
@@ -156,8 +180,9 @@ function chunkInputText(inputText, chunkLimit) {
 
   }
 */
-  console.log(chunkArray);
+  console.log("Chunk Array X: ", chunkArray); // add this line to print out the chunk array
   console.log("CHUNKY MONKY");
+  
   return chunkArray;
 }
 
@@ -174,6 +199,8 @@ function formatResult(generatedText, amount) { //tar in amount eftersom vi vill 
   console.log("Innan splittext: " + generatedText);
   const splitText = generatedText.split("\n").filter((str) => str.trim() !== "");
   console.log("Splittext :  " + splitText)
+
+  console.log("Antalet frågor som interfacet ska visa:  " + amount);
   const numQuestions = splitText.length / 2;
   const formattedQuestions = [];
   const formattedAnswers = [];
