@@ -6,13 +6,12 @@ export default function Home() {
   const [textInput, setTextInput] = useState("");
   const [amountInput, setAmountInput] = useState("");
   const [qaPairs, setQAPairs] = useState([]);
-
-  const [showAnswers, setShowAnswers] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [indexQ, setIndexQ] = useState();
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [last, setLast] = useState();
   const [first, setFirst] = useState();
+  const [shownText, setShownText] = useState();
 
 
 
@@ -42,21 +41,9 @@ export default function Home() {
 
       console.log(qaPairs);
       console.log(formattedResult);
-
-
-
-
-      
-
-      
-
-
       //console.log(trimUnfinishedSentences(data.result)); //fungerar inte just nu med arrayen
 
       initializeArrows(formattedResult);
-
-
-
 
     } catch (error) {
       // Consider implementing your own error handling logic here
@@ -64,11 +51,6 @@ export default function Home() {
       alert(error.message);
     }
   }
-
-
-
-
-
   function initializeArrows(dataRes) { //gör en metod så att vi får lite mer coherent vad grejerna gör
     setTextInput("");
     setAmountInput("");
@@ -80,34 +62,49 @@ export default function Home() {
     setIndexQ(0);
     setCurrentQuestion(dataRes[0].question);
     setCurrentAnswer(dataRes[0].answer);
+    setShownText(dataRes[0].question);
     setLast(false);
     setFirst(true);
   }
 
   function showNext() {
     if (indexQ + 1 < qaPairs.length) {
+      setShownText(qaPairs[indexQ + 1].question);
       setCurrentQuestion(qaPairs[indexQ + 1].question);
       setCurrentAnswer(qaPairs[indexQ + 1].answer);
       if (indexQ + 1 == qaPairs.length - 1) {
         setLast(true);
       }
       setIndexQ(indexQ + 1);
-      setShowAnswers(false);
       setFirst(false);
     }
   }
 
   function showPrevious() {
     if (indexQ - 1 >= 0) {
+      setShownText(qaPairs[indexQ - 1].question);
       setCurrentQuestion(qaPairs[indexQ - 1].question);
       setCurrentAnswer(qaPairs[indexQ - 1].answer);
       if (indexQ - 1 == 0) {
         setFirst(true);
       }
       setIndexQ(indexQ - 1);
-      setShowAnswers(false);
       setLast(false);
     }
+  }
+
+  function handleBoxSize() {
+    var myBox = document.getElementById("thetextbox");
+    myBox.style.height = "auto";
+  }
+
+  function flipCard(){
+      if (shownText == currentQuestion){
+        setShownText(currentAnswer);
+      }
+      else {
+        setShownText(currentQuestion);
+      }
   }
 
   return (
@@ -130,6 +127,7 @@ export default function Home() {
           <form onSubmit={onSubmit}>
             <div class="textAreaInput">
               <textarea
+                id="thetextbox"
                 class="text-input"
                 type="text"
                 placeholder="Type your text: "
@@ -155,26 +153,18 @@ export default function Home() {
               />
             </div>
 
-            <input type="submit" class="submitButton" value="Generate questions" />
+            <input type="submit" class="submitButton" value="Generate questions" onClick={handleBoxSize}/>
 
           </form>
         </div>
 
-        <div className={styles.result1}>
-          {qaPairs.length > 0 && (
-            <button className="hideShow" onClick={() => setShowAnswers(!showAnswers)}>
-              {showAnswers ? "Hide Answers" : "Show Answers"}
-            </button>
-          )}
-        </div>
         <div className={styles.result2}>
           <div className={styles.containerLeftArrow}>
             {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
           </div>
 
-          <div className={styles.questionAndAnswer}>
-            {currentQuestion}
-            {showAnswers && <p className={styles.answer}> {currentAnswer}</p>}
+          <div className={styles.questionAndAnswer} onClick={() => flipCard()}>
+            {shownText}
           </div>
 
           <div className={styles.containerRightArrow}>

@@ -117,6 +117,7 @@
   border-radius: 25px;
   padding: 20px;
   margin: 0px 40px 0px 40px;
+  transform: rotateY(360deg);
 }
 
 .main .containerLeftArrow {
@@ -142,4 +143,3 @@
 .main .answer {
   margin-bottom: 0px;
 }
-
