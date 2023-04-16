@@ -149,18 +149,20 @@ function chunkInputText(inputText, chunkLimit) {
 
   
 
-  if(arr.length > 0 && chunkArray[chunkArray.length] !== undefined){ //vi har kvar en chunk som sista som ska läggas till, too keep it simple så inkluderar vi den i föregående chunken
+  if(arr.length > 0 && chunkArray[0] === undefined){ //vi har kvar en chunk som sista som ska läggas till, too keep it simple så inkluderar vi den i föregående chunken, men i denn if så finns det ingen föregående så vi endast pushar
     //chunkArray.push(arr);
-    console.log("Vi pushar sista chunken" + chunkArray.length);
-    chunkArray[chunkArray.length - 1] = [...chunkArray[chunkArray.length - 1], ...arr];
-
-  }
-  else if(arr.length > 0){ //vi har kvar en chunk som sista som ska läggas till, too keep it simple så inkluderar vi den i föregående chunken, men i denn if så finns det ingen föregående så vi endast pushar
-    //chunkArray.push(arr);
-    console.log("Vi pushar sista chunken X" + arr);
+    console.log("Vi pushar sista chunken och det fanns ingen innan: " + arr);
     //chunkArray[chunkArray.length - 1] = [...chunkArray[chunkArray.length - 1], ...arr];
 
     chunkArray.push(arr);
+    
+
+  }
+  else if(arr.length > 0){ //vi har kvar en chunk som sista som ska läggas till, too keep it simple så inkluderar vi den i föregående chunken, 
+    
+
+    console.log("Vi pushar sista chunken och det fanns innan: " + chunkArray.length);
+    chunkArray[chunkArray.length - 1] = [...chunkArray[chunkArray.length - 1], ...arr];
 
   }
 
