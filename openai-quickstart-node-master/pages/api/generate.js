@@ -6,7 +6,7 @@ import localforage from "localforage";
 
 // If including via CDN in an HTML file
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-retrieveData();
+//retrieveData();
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -242,13 +242,14 @@ function formatResult(generatedText, amount) { //tar in amount eftersom vi vill 
 
   //istället för att returna en string, reuturna en array som är i rätt format
 
-  storeData(sendMeToIndex); //vi spara vår data
+  //storeData(sendMeToIndex); //vi spara vår data
 
   return sendMeToIndex;
 }
 
 //Localforage//Localstorage
 
+/*
 function storeData(qaPairs) {
 
   localforage.setItem('qaPairs', qaPairs)
@@ -276,3 +277,4 @@ function retrieveData() {
     });
 }
 
+*/

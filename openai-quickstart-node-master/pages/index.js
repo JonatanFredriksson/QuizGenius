@@ -1,6 +1,8 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./index.module.css";
+
+import localforage from "localforage";
 
 export default function Home() {
   const [textInput, setTextInput] = useState("");
@@ -12,9 +14,22 @@ export default function Home() {
   const [indexQ, setIndexQ] = useState();
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [last, setLast] = useState();
-  const [first, setFirst] = useState();
+  const [first, setFirst] = useState("");
 
 
+  useEffect(() => {
+    // Fetch the most recently stored QA pair from local storage
+    localforage.getItem("qaPairs").then((storedQAPairs) => {
+      if (storedQAPairs) {
+        setQAPairs(storedQAPairs);
+        // Set the initial question and answer to the most recent QA pair
+        const mostRecentQAPair = storedQAPairs[storedQAPairs.length - 1];
+        setCurrentQuestion(mostRecentQAPair.question);
+        setCurrentAnswer(mostRecentQAPair.answer);
+        setIndexQ(storedQAPairs.length - 1);
+      }
+    });
+  }, []);
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -39,6 +54,7 @@ export default function Home() {
       setQAPairs(formattedResult); //vi sätter datan i variabeln qaPairs
 
 
+      localforage.setItem("qaPairs", formattedResult);
 
       console.log(qaPairs);
       console.log(formattedResult);
@@ -48,7 +64,9 @@ export default function Home() {
 
       
 
-      
+      //window.scrollTo(0, document.body.scrollHeight);
+      document.querySelector('#output').scrollIntoView({ behavior: 'smooth', block: 'end' });
+
 
 
       //console.log(trimUnfinishedSentences(data.result)); //fungerar inte just nu med arrayen
@@ -110,20 +128,24 @@ export default function Home() {
     }
   }
 
+
+
   return (
     <div>
       <Head>
         <title>QuizGenius</title>
         <link rel="icon" href="/QuizGenius-Q.png" />
       </Head>
-
+      
+      
       <main className={styles.main}>
         <div>
           <img src="/QuizGenius-1.png" className={styles.icon} />
 
         </div>
         <div>
-          <h3>Autogenerate quiz questions for your own text</h3>
+        <h3>Autogenerate quiz questions!</h3>
+          <h5>Either write in your own notes to create quiz questions from or simply type in a topic</h5>
 
         </div>
         <div class="containerForm">
@@ -162,9 +184,20 @@ export default function Home() {
 
         <div className={styles.result1}>
           {qaPairs.length > 0 && (
-            <button className="hideShow" onClick={() => setShowAnswers(!showAnswers)}>
-              {showAnswers ? "Hide Answers" : "Show Answers"}
-            </button>
+            <button
+            id="hideShowBTN"
+            className="hideShow"
+            onClick={() => setShowAnswers(!showAnswers)}
+            style={{
+              backgroundColor: '#d34e3c',
+              color: "white",
+              padding: "10px",
+              borderRadius: "5px",
+              cursor: "pointer"
+            }}
+          >
+            {showAnswers ? "Hide Answers" : "Show Answers"}
+          </button>
           )}
         </div>
         <div className={styles.result2}>
@@ -172,7 +205,7 @@ export default function Home() {
             {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
           </div>
 
-          <div className={styles.questionAndAnswer}>
+          <div className={styles.questionAndAnswer} id="output">
             {currentQuestion}
             {showAnswers && <p className={styles.answer}> {currentAnswer}</p>}
           </div>
