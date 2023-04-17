@@ -4,7 +4,7 @@ import styles from "./index.module.css";
 
 export default function Home() {
   const [textInput, setTextInput] = useState("");
-  const [amountInput, setAmountInput] = useState("");
+  const [amountInput, setAmountInput] = useState();
   const [qaPairs, setQAPairs] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [indexQ, setIndexQ] = useState();
@@ -12,6 +12,9 @@ export default function Home() {
   const [last, setLast] = useState();
   const [first, setFirst] = useState();
   const [shownText, setShownText] = useState();
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [answeredQuestions, setAnsweredQuestions] = useState(0);
+  const [rwAnswers, setRWAnswers] = useState([]);
 
 
 
@@ -37,8 +40,6 @@ export default function Home() {
       const formattedResult = (data.result); //formateringen måste nu ändras när vi ändrat datastrukturen, vi skippar detta steg, formatterar i generate istället
       setQAPairs(formattedResult); //vi sätter datan i variabeln qaPairs
 
-
-
       console.log(qaPairs);
       console.log(formattedResult);
       //console.log(trimUnfinishedSentences(data.result)); //fungerar inte just nu med arrayen
@@ -53,9 +54,11 @@ export default function Home() {
   }
   function initializeArrows(dataRes) { //gör en metod så att vi får lite mer coherent vad grejerna gör
     setTextInput("");
-    setAmountInput("");
+    //setAmountInput("");
     //setQAPairs(dataRes);
-
+    setCorrectAnswers(0);
+    setAnsweredQuestions(0);
+    initializeAnswered();
 
     console.log(dataRes);
 
@@ -67,6 +70,11 @@ export default function Home() {
     setFirst(true);
   }
 
+  function initializeAnswered(){
+    const unAnswered = new Array(amountInput).fill('unanswered');
+    setRWAnswers(unAnswered);
+  }
+
   function showNext() {
     if (indexQ + 1 < qaPairs.length) {
       setShownText(qaPairs[indexQ + 1].question);
@@ -75,6 +83,7 @@ export default function Home() {
       if (indexQ + 1 == qaPairs.length - 1) {
         setLast(true);
       }
+      resetButtons(indexQ+1);
       setIndexQ(indexQ + 1);
       setFirst(false);
     }
@@ -88,8 +97,24 @@ export default function Home() {
       if (indexQ - 1 == 0) {
         setFirst(true);
       }
+      resetButtons(indexQ-1);
       setIndexQ(indexQ - 1);
       setLast(false);
+    }
+  }
+
+  function resetButtons(index){
+    if(rwAnswers[index]=='right'){
+      document.getElementById('greenButt').classList.add(styles.pressed);
+      document.getElementById('redButt').classList.remove(styles.pressed);
+    }
+    else if(rwAnswers[index]=='wrong'){
+      document.getElementById('redButt').classList.add(styles.pressed);
+      document.getElementById('greenButt').classList.remove(styles.pressed);
+    }
+    else{
+      document.getElementById('greenButt').classList.remove(styles.pressed);
+      document.getElementById('redButt').classList.remove(styles.pressed);
     }
   }
 
@@ -106,6 +131,47 @@ export default function Home() {
         setShownText(currentQuestion);
       }
   }
+
+    function calcRightAnswers(){
+      let sum = 0;
+      for (let i = 0; i < rwAnswers.length; i++){
+        if (rwAnswers[i]=='right'){sum = sum + 1;}
+      }
+      console.log('calcRightAnswers:', sum);
+      setCorrectAnswers(sum);
+    }
+    function calcAnswered(){
+      let sum = 0;
+      for (let i = 0; i < rwAnswers.length; i++){
+        if (rwAnswers[i]=='right' || rwAnswers[i]=='wrong'){sum+=1;}
+      }
+      console.log('calcAnswered:', sum);
+      setAnsweredQuestions(sum);
+    }
+
+    function pressGButton(){
+      const button = document.getElementById('greenButt');
+      button.classList.add(styles.pressed);
+      rwAnswers[indexQ] = 'right';
+      console.log(rwAnswers);
+      const unpress = document.getElementById('redButt');
+      unpress.classList.remove(styles.pressed);
+      calcRightAnswers();
+      calcAnswered();
+    }
+
+    function pressRButton(){
+      const button = document.getElementById('redButt');
+      button.classList.add(styles.pressed);
+      rwAnswers[indexQ] = 'wrong';
+      console.log(rwAnswers);
+      const unpress = document.getElementById('greenButt');
+      unpress.classList.remove(styles.pressed);
+
+      calcRightAnswers();
+      calcAnswered();
+    }
+
 
   return (
     <div>
@@ -170,8 +236,14 @@ export default function Home() {
           <div className={styles.containerRightArrow}>
             {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
           </div>
-
         </div>
+          
+        <div class={styles.buttons}>
+          <button class={styles.green} id="greenButt" onClick={pressGButton}>KNOW IT WELL</button>
+          <button class={styles.red} id="redButt" onClick={pressRButton}>DON'T KNOW IT</button>
+        </div>
+        <div>Correct answers: {correctAnswers}/{answeredQuestions} </div>
+        <div>{Math.round(correctAnswers/answeredQuestions*100)}%</div>
       </main>
     </div>
   );
