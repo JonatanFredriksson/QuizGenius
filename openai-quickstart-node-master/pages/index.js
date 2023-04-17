@@ -16,7 +16,6 @@ export default function Home() {
   const [last, setLast] = useState();
   const [first, setFirst] = useState("");
 
-
   useEffect(() => {
     // Fetch the most recently stored QA pair from local storage
     localforage.getItem("qaPairs").then((storedQAPairs) => {
@@ -28,8 +27,15 @@ export default function Home() {
         setCurrentAnswer(mostRecentQAPair.answer);
         setIndexQ(0);
         setFirst(true);
-
+        document.getElementById("downloadButton").addEventListener("click", function() {
+          console.log("TESTESTTESTSTSTST");
+          console.log(storedQAPairs);
+          downloadStoredFlashcards(storedQAPairs);
+        });
       }
+    }).catch((error) => {
+      // Handle any errors that may occur during fetching
+      console.error("Error fetching data from local storage:", error);
     });
   }, []);
 
@@ -77,7 +83,7 @@ export default function Home() {
 
       document.getElementById("downloadButton").addEventListener("click", function(){
         console.log("TESTESTTESTSTSTST");
-        downloadStoredFlashcards();
+        downloadStoredFlashcards(storedQAPairs);
       }); //
 
       // Trigger uploadFlashcards() function when a file input changes
@@ -92,9 +98,10 @@ export default function Home() {
   }
 
 
-  function downloadStoredFlashcards(){
+  function downloadStoredFlashcards(storedQAPairs){
     console.log("Check me out");
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(qaPairs));
+    
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storedQAPairs));
     var downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
     downloadAnchorNode.setAttribute("download", "flashcards.json");
@@ -107,7 +114,9 @@ export default function Home() {
 
   // Function to upload and load question and answer pairs from a JSON file
 function uploadFlashcards(event) {
+  console.log("uploader");
   var file = event.target.files[0];
+  //var file = document.getElementById("fileInput");
   var reader = new FileReader();
   reader.onload = function (e) {
       var flashcards = JSON.parse(e.target.result);
@@ -116,6 +125,8 @@ function uploadFlashcards(event) {
       // Use the loaded flashcards as needed, e.g., update your flashcards data structure or render them on the page
   };
   reader.readAsText(file);
+  setQAPairs(event); //säter qaPair till det upladdade
+  initializeArrows(event);
 }
 
   
@@ -180,7 +191,6 @@ function uploadFlashcards(event) {
         <div>
         <h3>Autogenerate quiz questions!</h3>
           <h5>Either write in your own notes to create quiz questions from or simply type in a topic</h5>
-          <button id="downloadButton">Download Flashcards</button>
 
         </div>
         <div class="containerForm">
@@ -244,6 +254,25 @@ function uploadFlashcards(event) {
           </div>
 
         </div>
+        <button className={styles.downloadUpload} id="downloadButton">
+        <img src="/DownloadIconTransparent.png" className={styles.iconDownload} />
+
+        </button>
+        <p className = {styles.textarea}>Download File</p>
+
+        <button className={styles.downloadUpload} id="uploadButton" onclick='uploadFlashcards'>
+        <img src="/UploadIcon.png" className={styles.iconDownload} />
+
+        </button>
+        <p className = {styles.textarea}>Upload a File</p>
+
+        <input
+  id="fileInput"
+  type="file"
+  accept=".json"
+  onChange={uploadFlashcards}
+/>
+
       </main>
     </div>
   );

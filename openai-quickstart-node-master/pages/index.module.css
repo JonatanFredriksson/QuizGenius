@@ -37,6 +37,12 @@
   width: 300px;
   height: fit-content;
 }
+main .iconDownload {
+  width: 25px;
+  height: fit-content;
+  background-color: transparent;
+
+}
 .main h3 {
   font-size: 24px;
   line-height: 40px;
@@ -168,4 +174,20 @@
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
   background-color: #d34e3c !important;
   color:#fff;
+}
+
+.downloadUpload{
+  margin: 0px 40px 0px 40px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+  background-color: #ffffff;
+  color:#fff;
+  cursor: pointer;
+  width: 100px;
+  border-radius: 25px;
+
+
+}
+
+#hiddenText {
+  display: none;
 }
