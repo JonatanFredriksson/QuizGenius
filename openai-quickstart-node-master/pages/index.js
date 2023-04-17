@@ -23,10 +23,12 @@ export default function Home() {
       if (storedQAPairs) {
         setQAPairs(storedQAPairs);
         // Set the initial question and answer to the most recent QA pair
-        const mostRecentQAPair = storedQAPairs[storedQAPairs.length - 1];
+        const mostRecentQAPair = storedQAPairs[0];
         setCurrentQuestion(mostRecentQAPair.question);
         setCurrentAnswer(mostRecentQAPair.answer);
-        setIndexQ(storedQAPairs.length - 1);
+        setIndexQ(0);
+        setFirst(true);
+
       }
     });
   }, []);
@@ -73,7 +75,13 @@ export default function Home() {
 
       initializeArrows(formattedResult);
 
+      document.getElementById("downloadButton").addEventListener("click", function(){
+        console.log("TESTESTTESTSTSTST");
+        downloadStoredFlashcards();
+      }); //
 
+      // Trigger uploadFlashcards() function when a file input changes
+      //document.getElementById("uploadInput").addEventListener("change", uploadFlashcards);
 
 
     } catch (error) {
@@ -84,7 +92,33 @@ export default function Home() {
   }
 
 
+  function downloadStoredFlashcards(){
+    console.log("Check me out");
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(qaPairs));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "flashcards.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
 
+
+  }
+
+  // Function to upload and load question and answer pairs from a JSON file
+function uploadFlashcards(event) {
+  var file = event.target.files[0];
+  var reader = new FileReader();
+  reader.onload = function (e) {
+      var flashcards = JSON.parse(e.target.result);
+      console.log("Flashcards loaded from file:");
+      console.log(flashcards);
+      // Use the loaded flashcards as needed, e.g., update your flashcards data structure or render them on the page
+  };
+  reader.readAsText(file);
+}
+
+  
 
 
   function initializeArrows(dataRes) { //gör en metod så att vi får lite mer coherent vad grejerna gör
@@ -146,6 +180,7 @@ export default function Home() {
         <div>
         <h3>Autogenerate quiz questions!</h3>
           <h5>Either write in your own notes to create quiz questions from or simply type in a topic</h5>
+          <button id="downloadButton">Download Flashcards</button>
 
         </div>
         <div class="containerForm">
@@ -186,15 +221,9 @@ export default function Home() {
           {qaPairs.length > 0 && (
             <button
             id="hideShowBTN"
-            className="hideShow"
+            className={styles.hideShow}
             onClick={() => setShowAnswers(!showAnswers)}
-            style={{
-              backgroundColor: '#d34e3c',
-              color: "white",
-              padding: "10px",
-              borderRadius: "5px",
-              cursor: "pointer"
-            }}
+            
           >
             {showAnswers ? "Hide Answers" : "Show Answers"}
           </button>

@@ -247,6 +247,7 @@ function formatResult(generatedText, amount) { //tar in amount eftersom vi vill 
   return sendMeToIndex;
 }
 
+
 //Localforage//Localstorage
 
 /*

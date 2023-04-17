@@ -25,6 +25,14 @@
   text-align: center;
   
 }
+
+.main .hideShow {
+  background-color: #d34e3c ;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
 .main .icon {
   width: 300px;
   height: fit-content;
