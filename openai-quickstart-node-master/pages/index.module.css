@@ -184,10 +184,53 @@ main .iconDownload {
   cursor: pointer;
   width: 100px;
   border-radius: 25px;
+  transition: background-color 0.3s ease-in-out;
+
+
+}
+.downloadUpload:hover{
+  background-color: #e0e0e0;
+
 
 
 }
 
 #hiddenText {
   display: none;
+}
+
+.uploadFileButton{
+  /* Customize the background color */
+  background-color: #d34e3c;
+  /* Add some padding to the button */
+  padding: 10px 20px;
+  /* Add a border */
+  border: none;
+  /* Add some hover effect */
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  border-radius: 25px;
+  margin: 40px 40px 40px 40px;
+
+
+}
+.customFileInput {
+  /* Style the custom file input button */
+  /* Set the desired width and height for the button */
+  width: 100%;
+  height: 100%;
+  /* Customize the appearance of the button */
+  background-color: #f2f2f2;
+  border: none;
+  /* Add some hover effect */
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  padding: 10px 20px;
+  border-radius: 25px;
+
+
+}
+.customFileInput:hover {
+  /* Change the background color on hover */
+  background-color: #e0e0e0;
 }

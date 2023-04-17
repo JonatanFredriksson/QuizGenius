@@ -254,23 +254,26 @@ function uploadFlashcards(event) {
           </div>
 
         </div>
+        <p className = {styles.textarea}>Download File</p>
+
         <button className={styles.downloadUpload} id="downloadButton">
         <img src="/DownloadIconTransparent.png" className={styles.iconDownload} />
 
         </button>
-        <p className = {styles.textarea}>Download File</p>
 
-        <button className={styles.downloadUpload} id="uploadButton" onclick='uploadFlashcards'>
-        <img src="/UploadIcon.png" className={styles.iconDownload} />
+        
 
-        </button>
-        <p className = {styles.textarea}>Upload a File</p>
-
-        <input
+        <div className={styles.uploadFileButton}>
+        <label htmlFor="fileInput" className={styles.customFileInput}>
+            Upload File
+        </label>
+        </div>
+        <input className={styles.uploadFileButton}
   id="fileInput"
   type="file"
   accept=".json"
   onChange={uploadFlashcards}
+  style={{ display: 'none' }}
 />
 
       </main>
