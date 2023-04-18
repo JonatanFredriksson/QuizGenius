@@ -53,7 +53,6 @@ export default function Home() {
   async function onSubmit(event) {
     event.preventDefault();
     try {
-      setActiveDownload(true);
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
