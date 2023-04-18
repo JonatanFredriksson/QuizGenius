@@ -160,6 +160,9 @@ export default function Home() {
 
       setQAPairs(flashcards);
       initializeArrows(flashcards);
+      localforage.setItem("qaPairs", flashcards);
+
+      qaPairsRef.current = flashcards;
 
     };
     reader.readAsText(file);
