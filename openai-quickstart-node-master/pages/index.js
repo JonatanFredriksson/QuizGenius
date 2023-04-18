@@ -80,6 +80,7 @@ export default function Home() {
       setShownText(qaPairs[indexQ + 1].question);
       setCurrentQuestion(qaPairs[indexQ + 1].question);
       setCurrentAnswer(qaPairs[indexQ + 1].answer);
+      removeFlip();
       if (indexQ + 1 == qaPairs.length - 1) {
         setLast(true);
       }
@@ -89,11 +90,20 @@ export default function Home() {
     }
   }
 
+  function removeFlip(){
+    const flashcard = document.getElementById('flashcard');
+      if(flashcard.classList.contains(styles.flipping)){
+        flashcard.classList.remove(styles.flipping);
+      }
+  }
+
+
   function showPrevious() {
     if (indexQ - 1 >= 0) {
       setShownText(qaPairs[indexQ - 1].question);
       setCurrentQuestion(qaPairs[indexQ - 1].question);
       setCurrentAnswer(qaPairs[indexQ - 1].answer);
+      removeFlip();
       if (indexQ - 1 == 0) {
         setFirst(true);
       }
@@ -123,54 +133,56 @@ export default function Home() {
     myBox.style.height = "auto";
   }
 
-  function flipCard(){
-      if (shownText == currentQuestion){
-        setShownText(currentAnswer);
-      }
-      else {
-        setShownText(currentQuestion);
-      }
+  function calcRightAnswers(){
+    let sum = 0;
+    for (let i = 0; i < rwAnswers.length; i++){
+      if (rwAnswers[i]=='right'){sum = sum + 1;}
+    }
+    console.log('calcRightAnswers:', sum);
+    setCorrectAnswers(sum);
+  }
+  function calcAnswered(){
+    let sum = 0;
+    for (let i = 0; i < rwAnswers.length; i++){
+      if (rwAnswers[i]=='right' || rwAnswers[i]=='wrong'){sum+=1;}
+    }
+    console.log('calcAnswered:', sum);
+    setAnsweredQuestions(sum);
   }
 
-    function calcRightAnswers(){
-      let sum = 0;
-      for (let i = 0; i < rwAnswers.length; i++){
-        if (rwAnswers[i]=='right'){sum = sum + 1;}
-      }
-      console.log('calcRightAnswers:', sum);
-      setCorrectAnswers(sum);
-    }
-    function calcAnswered(){
-      let sum = 0;
-      for (let i = 0; i < rwAnswers.length; i++){
-        if (rwAnswers[i]=='right' || rwAnswers[i]=='wrong'){sum+=1;}
-      }
-      console.log('calcAnswered:', sum);
-      setAnsweredQuestions(sum);
-    }
+  function pressGButton(){
+    const button = document.getElementById('greenButt');
+    button.classList.add(styles.pressed);
+    rwAnswers[indexQ] = 'right';
+    console.log(rwAnswers);
+    const unpress = document.getElementById('redButt');
+    unpress.classList.remove(styles.pressed);
+    calcRightAnswers();
+    calcAnswered();
+  }
 
-    function pressGButton(){
-      const button = document.getElementById('greenButt');
-      button.classList.add(styles.pressed);
-      rwAnswers[indexQ] = 'right';
-      console.log(rwAnswers);
-      const unpress = document.getElementById('redButt');
-      unpress.classList.remove(styles.pressed);
-      calcRightAnswers();
-      calcAnswered();
-    }
+  function pressRButton(){
+    const button = document.getElementById('redButt');
+    button.classList.add(styles.pressed);
+    rwAnswers[indexQ] = 'wrong';
+    console.log(rwAnswers);
+    const unpress = document.getElementById('greenButt');
+    unpress.classList.remove(styles.pressed);
 
-    function pressRButton(){
-      const button = document.getElementById('redButt');
-      button.classList.add(styles.pressed);
-      rwAnswers[indexQ] = 'wrong';
-      console.log(rwAnswers);
-      const unpress = document.getElementById('greenButt');
-      unpress.classList.remove(styles.pressed);
+    calcRightAnswers();
+    calcAnswered();
+  }
 
-      calcRightAnswers();
-      calcAnswered();
+  function handleFlip(){
+    const flashcard = document.getElementById('flashcard');
+    if(flashcard.classList.contains(styles.flipping)){
+      flashcard.classList.remove(styles.flipping);
     }
+    else{
+      flashcard.classList.add(styles.flipping);
+    }
+    flashcard.classList.toggle(styles.showback);
+  }
 
 
   return (
@@ -229,9 +241,10 @@ export default function Home() {
             {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
           </div>
 
-          <div className={styles.questionAndAnswer} onClick={() => flipCard()}>
-            {shownText}
-          </div>
+          <div class={styles.flashcard} onClick={handleFlip} id='flashcard'>
+            <div class={styles.front} id='back'>{currentQuestion}</div>
+            <div class={styles.back} id='front'>{currentAnswer}</div>
+        - </div>
 
           <div className={styles.containerRightArrow}>
             {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
@@ -244,6 +257,7 @@ export default function Home() {
         </div>
         <div>Correct answers: {correctAnswers}/{answeredQuestions} </div>
         <div>{Math.round(correctAnswers/answeredQuestions*100)}%</div>
+
       </main>
     </div>
   );
