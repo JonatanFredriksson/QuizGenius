@@ -9,39 +9,44 @@ export default function Home() {
   const [amountInput, setAmountInput] = useState("");
   const [qaPairs, setQAPairs] = useState([]);
 
+
   const [showAnswers, setShowAnswers] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [indexQ, setIndexQ] = useState();
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [last, setLast] = useState();
   const [first, setFirst] = useState("");
+  const [activeDownload, setActiveDownload] = useState(false);
+
 
   useEffect(() => {
     // Fetch the most recently stored QA pair from local storage
     localforage.getItem("qaPairs").then((storedQAPairs) => {
       if (storedQAPairs) {
-        setQAPairs(storedQAPairs);
+        setQAPairs(storedQAPairs); //storedQAPairs är ogs
         // Set the initial question and answer to the most recent QA pair
-        const mostRecentQAPair = storedQAPairs[0];
-        setCurrentQuestion(mostRecentQAPair.question);
-        setCurrentAnswer(mostRecentQAPair.answer);
+        const firstQAPair = storedQAPairs[0];
+        setCurrentQuestion(firstQAPair.question);
+        setCurrentAnswer(firstQAPair.answer);
         setIndexQ(0);
         setFirst(true);
-        document.getElementById("downloadButton").addEventListener("click", function() {
-          console.log("TESTESTTESTSTSTST");
-          console.log(storedQAPairs);
-          downloadStoredFlashcards(storedQAPairs);
-        });
       }
     }).catch((error) => {
       // Handle any errors that may occur during fetching
       console.error("Error fetching data from local storage:", error);
     });
+  
+    // Add event listener to download button
+    
+    // Cleanup: remove event listener when component unmounts
+    
+  
   }, []);
 
   async function onSubmit(event) {
     event.preventDefault();
     try {
+      setActiveDownload(true);
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
@@ -55,6 +60,9 @@ export default function Home() {
       if (response.status !== 200) {
         throw data.error || new Error(`Request failed with status ${response.status}`);
       }
+      localforage.setItem("qaPairs", data.result);
+
+      setActiveDownload(true); //does seem to not do anything since it resets
 
       //setResult(data.result);
       console.log("This is the data: " + data.result);
@@ -62,15 +70,15 @@ export default function Home() {
       setQAPairs(formattedResult); //vi sätter datan i variabeln qaPairs
 
 
-      localforage.setItem("qaPairs", formattedResult);
 
-      console.log(qaPairs);
+      console.log("qaPairs: " + qaPairs);
       console.log(formattedResult);
 
 
 
+// qaPairs = gamla
+//data.result = nya
 
-      
 
       //window.scrollTo(0, document.body.scrollHeight);
       document.querySelector('#output').scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -80,12 +88,17 @@ export default function Home() {
       //console.log(trimUnfinishedSentences(data.result)); //fungerar inte just nu med arrayen
 
       initializeArrows(formattedResult);
+      const downloadButton = document.getElementById("downloadButton");
+      downloadButton.addEventListener("click", function () {
+        downloadFlashcards(formattedResult);
+      });
+    
 
-      document.getElementById("downloadButton").addEventListener("click", function(){
-        console.log("TESTESTTESTSTSTST");
-        downloadStoredFlashcards(storedQAPairs);
+      /*document.getElementById("downloadButton").addEventListener("click", function () { //vi adderar vår egna nedladdningsevent
+        console.log("Active event");
+        downloadActiveFlashcards(formattedResult);
       }); //
-
+*/
       // Trigger uploadFlashcards() function when a file input changes
       //document.getElementById("uploadInput").addEventListener("change", uploadFlashcards);
 
@@ -97,11 +110,11 @@ export default function Home() {
     }
   }
 
+  
+  function downloadActiveFlashcards(flashCardRes) {
+    console.log("Downloading active");
 
-  function downloadStoredFlashcards(storedQAPairs){
-    console.log("Check me out");
-    
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storedQAPairs));
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(flashCardRes));
     var downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
     downloadAnchorNode.setAttribute("download", "flashcards.json");
@@ -112,24 +125,59 @@ export default function Home() {
 
   }
 
+  function downloadFlashcards(qaPairs) {
+    console.log("Downloading universal");
+
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(qaPairs));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "flashcards.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+
+
+  }
+
+  function downloadStoredFlashcards(oursQAPairs) {
+    console.log("Check me out" + activeDownload);
+
+    if(activeDownload===false){
+      var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(oursQAPairs));
+      var downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "flashcards.json");
+      document.body.appendChild(downloadAnchorNode);
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    }
+   
+
+
+  }
+
   // Function to upload and load question and answer pairs from a JSON file
-function uploadFlashcards(event) {
-  console.log("uploader");
-  var file = event.target.files[0];
-  //var file = document.getElementById("fileInput");
-  var reader = new FileReader();
-  reader.onload = function (e) {
+  function uploadFlashcards(event) {
+    console.log("uploader");
+    var file = event.target.files[0];
+    //var file = document.getElementById("fileInput");
+    var reader = new FileReader();
+    reader.onload = function (e) {
       var flashcards = JSON.parse(e.target.result);
       console.log("Flashcards loaded from file:");
       console.log(flashcards);
       // Use the loaded flashcards as needed, e.g., update your flashcards data structure or render them on the page
-  };
-  reader.readAsText(file);
-  setQAPairs(event); //säter qaPair till det upladdade
-  initializeArrows(event);
-}
 
-  
+      setQAPairs(flashcards);
+      initializeArrows(flashcards);
+
+    };
+    reader.readAsText(file);
+    //setQAPairs(event); //säter qaPair till det upladdade
+    //initializeArrows(qaPairs);
+  }
+
+
 
 
   function initializeArrows(dataRes) { //gör en metod så att vi får lite mer coherent vad grejerna gör
@@ -181,15 +229,15 @@ function uploadFlashcards(event) {
         <title>QuizGenius</title>
         <link rel="icon" href="/QuizGenius-Q.png" />
       </Head>
-      
-      
+
+
       <main className={styles.main}>
         <div>
           <img src="/QuizGenius-1.png" className={styles.icon} />
 
         </div>
         <div>
-        <h3>Autogenerate quiz questions!</h3>
+          <h3>Autogenerate quiz questions!</h3>
           <h5>Either write in your own notes to create quiz questions from or simply type in a topic</h5>
 
         </div>
@@ -230,13 +278,13 @@ function uploadFlashcards(event) {
         <div className={styles.result1}>
           {qaPairs.length > 0 && (
             <button
-            id="hideShowBTN"
-            className={styles.hideShow}
-            onClick={() => setShowAnswers(!showAnswers)}
-            
-          >
-            {showAnswers ? "Hide Answers" : "Show Answers"}
-          </button>
+              id="hideShowBTN"
+              className={styles.hideShow}
+              onClick={() => setShowAnswers(!showAnswers)}
+
+            >
+              {showAnswers ? "Hide Answers" : "Show Answers"}
+            </button>
           )}
         </div>
         <div className={styles.result2}>
@@ -254,27 +302,27 @@ function uploadFlashcards(event) {
           </div>
 
         </div>
-        <p className = {styles.textarea}>Download File</p>
+        <p className={styles.textarea}>Download File</p>
 
         <button className={styles.downloadUpload} id="downloadButton">
-        <img src="/DownloadIconTransparent.png" className={styles.iconDownload} />
+          <img src="/DownloadIconTransparent.png" className={styles.iconDownload} />
 
         </button>
 
-        
+
 
         <div className={styles.uploadFileButton}>
-        <label htmlFor="fileInput" className={styles.customFileInput}>
+          <label htmlFor="fileInput" className={styles.customFileInput}>
             Upload File
-        </label>
+          </label>
         </div>
         <input className={styles.uploadFileButton}
-  id="fileInput"
-  type="file"
-  accept=".json"
-  onChange={uploadFlashcards}
-  style={{ display: 'none' }}
-/>
+          id="fileInput"
+          type="file"
+          accept=".json"
+          onChange={uploadFlashcards}
+          style={{ display: 'none' }}
+        />
 
       </main>
     </div>
