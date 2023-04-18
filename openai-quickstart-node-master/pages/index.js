@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "./index.module.css";
 
 import localforage from "localforage";
@@ -16,14 +16,17 @@ export default function Home() {
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [last, setLast] = useState();
   const [first, setFirst] = useState("");
-  const [activeDownload, setActiveDownload] = useState(false);
+  const [downloadInProgress, setDownloadInProgress] = useState(false); // Add downloadInProgress state
 
+  
+  let qaPairsRef = useRef([]); // Ref to store updated qaPairs value
 
   useEffect(() => {
     // Fetch the most recently stored QA pair from local storage
     localforage.getItem("qaPairs").then((storedQAPairs) => {
       if (storedQAPairs) {
-        setQAPairs(storedQAPairs); //storedQAPairs är ogs
+        setQAPairs(storedQAPairs);
+        qaPairsRef.current = storedQAPairs;
         // Set the initial question and answer to the most recent QA pair
         const firstQAPair = storedQAPairs[0];
         setCurrentQuestion(firstQAPair.question);
@@ -37,11 +40,15 @@ export default function Home() {
     });
   
     // Add event listener to download button
-    
-    // Cleanup: remove event listener when component unmounts
-    
+    const downloadButton = document.getElementById("downloadButton");
+    downloadButton.addEventListener("click", downloadFlashcards); // Update to use the downloadFlashcards function
   
+    // Cleanup: remove event listener when component unmounts
+    return () => {
+      downloadButton.removeEventListener("click", downloadFlashcards);
+    };
   }, []);
+  
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -62,7 +69,8 @@ export default function Home() {
       }
       localforage.setItem("qaPairs", data.result);
 
-      setActiveDownload(true); //does seem to not do anything since it resets
+      qaPairsRef.current = (data.result);
+      //setActiveDownload(true); //does seem to not do anything since it resets
 
       //setResult(data.result);
       console.log("This is the data: " + data.result);
@@ -89,10 +97,10 @@ export default function Home() {
 
       initializeArrows(formattedResult);
       const downloadButton = document.getElementById("downloadButton");
-      downloadButton.addEventListener("click", function () {
+      /*downloadButton.addEventListener("click", function () {
         downloadFlashcards(formattedResult);
       });
-    
+    */
 
       /*document.getElementById("downloadButton").addEventListener("click", function () { //vi adderar vår egna nedladdningsevent
         console.log("Active event");
@@ -111,50 +119,32 @@ export default function Home() {
   }
 
   
-  function downloadActiveFlashcards(flashCardRes) {
-    console.log("Downloading active");
+  
 
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(flashCardRes));
-    var downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "flashcards.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
+  async function downloadFlashcards() {
 
-
-  }
-
-  function downloadFlashcards(qaPairs) {
-    console.log("Downloading universal");
-
-    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(qaPairs));
-    var downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "flashcards.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-
-
-  }
-
-  function downloadStoredFlashcards(oursQAPairs) {
-    console.log("Check me out" + activeDownload);
-
-    if(activeDownload===false){
-      var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(oursQAPairs));
-      var downloadAnchorNode = document.createElement('a');
-      downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", "flashcards.json");
-      document.body.appendChild(downloadAnchorNode);
-      downloadAnchorNode.click();
-      downloadAnchorNode.remove();
+    if (downloadInProgress) {
+      return; // Return early if download is already in progress
     }
-   
+    setDownloadInProgress(true); // Set download in progress flag
 
+    const qaPairsData = await localforage.getItem("qaPairs");
+    if (qaPairsData) {
+      // Generate JSON file
+      const jsonData = JSON.stringify(qaPairsData, null, 2);
+      const blob = new Blob([jsonData], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "qaPairs.json";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+    setDownloadInProgress(false); // Set download in progress flag
 
   }
+
+
 
   // Function to upload and load question and answer pairs from a JSON file
   function uploadFlashcards(event) {
