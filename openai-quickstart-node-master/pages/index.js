@@ -21,7 +21,9 @@ export default function Home() {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState(0);
   const [rwAnswers, setRWAnswers] = useState([]);
-  
+
+  const [multiQuestions, setQuestionMode] = useState(true);
+
   let qaPairsRef = useRef([]); // Ref to store updated qaPairs value
 
   useEffect(() => {
@@ -41,17 +43,17 @@ export default function Home() {
       // Handle any errors that may occur during fetching
       console.error("Error fetching data from local storage:", error);
     });
-  
+
     // Add event listener to download button
     const downloadButton = document.getElementById("downloadButton");
     downloadButton.addEventListener("click", downloadFlashcards); // Update to use the downloadFlashcards function
-  
+
     // Cleanup: remove event listener when component unmounts
     return () => {
       downloadButton.removeEventListener("click", downloadFlashcards);
     };
   }, []);
-  
+
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -62,7 +64,7 @@ export default function Home() {
           "Content-Type": "application/json",
         },
 
-        body: JSON.stringify({ inputText: textInput, amount: amountInput }),
+        body: JSON.stringify({ inputText: textInput, amount: amountInput, questionMode: multiQuestions }),
       });
 
       const data = await response.json();
@@ -86,8 +88,8 @@ export default function Home() {
 
 
 
-// qaPairs = gamla
-//data.result = nya
+      // qaPairs = gamla
+      //data.result = nya
 
 
       //window.scrollTo(0, document.body.scrollHeight);
@@ -120,8 +122,8 @@ export default function Home() {
     }
   }
 
-  
-  
+
+
 
   async function downloadFlashcards() {
 
@@ -188,11 +190,18 @@ export default function Home() {
     setIndexQ(0);
     setCurrentQuestion(dataRes[0].question);
     setCurrentAnswer(dataRes[0].answer);
-    setLast(false);
+    if(amountInput> 1){
+      setLast(false);
+
+    }
+    else{
+      setLast(true);
+
+    }
     setFirst(true);
   }
 
-  function initializeAnswered(){
+  function initializeAnswered() {
     const unAnswered = new Array(amountInput).fill('unanswered');
     setRWAnswers(unAnswered);
   }
@@ -205,7 +214,7 @@ export default function Home() {
       if (indexQ + 1 == qaPairs.length - 1) {
         setLast(true);
       }
-      resetButtons(indexQ+1);
+      resetButtons(indexQ + 1);
       setIndexQ(indexQ + 1);
       setFirst(false);
     }
@@ -219,29 +228,29 @@ export default function Home() {
       if (indexQ - 1 == 0) {
         setFirst(true);
       }
-      resetButtons(indexQ-1);
+      resetButtons(indexQ - 1);
       setIndexQ(indexQ - 1);
       setLast(false);
     }
   }
 
-  function removeFlip(){
+  function removeFlip() {
     const flashcard = document.getElementById('flashcard');
-      if(flashcard.classList.contains(styles.flipping)){
-        flashcard.classList.remove(styles.flipping);
-      }
+    if (flashcard.classList.contains(styles.flipping)) {
+      flashcard.classList.remove(styles.flipping);
+    }
   }
 
-  function resetButtons(index){
-    if(rwAnswers[index]=='right'){
+  function resetButtons(index) {
+    if (rwAnswers[index] == 'right') {
       document.getElementById('greenButt').classList.add(styles.pressed);
       document.getElementById('redButt').classList.remove(styles.pressed);
     }
-    else if(rwAnswers[index]=='wrong'){
+    else if (rwAnswers[index] == 'wrong') {
       document.getElementById('redButt').classList.add(styles.pressed);
       document.getElementById('greenButt').classList.remove(styles.pressed);
     }
-    else{
+    else {
       document.getElementById('greenButt').classList.remove(styles.pressed);
       document.getElementById('redButt').classList.remove(styles.pressed);
     }
@@ -252,24 +261,24 @@ export default function Home() {
     myBox.style.height = "auto";
   }
 
-  function calcRightAnswers(){
+  function calcRightAnswers() {
     let sum = 0;
-    for (let i = 0; i < rwAnswers.length; i++){
-      if (rwAnswers[i]=='right'){sum = sum + 1;}
+    for (let i = 0; i < rwAnswers.length; i++) {
+      if (rwAnswers[i] == 'right') { sum = sum + 1; }
     }
     console.log('calcRightAnswers:', sum);
     setCorrectAnswers(sum);
   }
-  function calcAnswered(){
+  function calcAnswered() {
     let sum = 0;
-    for (let i = 0; i < rwAnswers.length; i++){
-      if (rwAnswers[i]=='right' || rwAnswers[i]=='wrong'){sum+=1;}
+    for (let i = 0; i < rwAnswers.length; i++) {
+      if (rwAnswers[i] == 'right' || rwAnswers[i] == 'wrong') { sum += 1; }
     }
     console.log('calcAnswered:', sum);
     setAnsweredQuestions(sum);
   }
 
-  function pressGButton(){
+  function pressGButton() {
     const button = document.getElementById('greenButt');
     button.classList.add(styles.pressed);
     rwAnswers[indexQ] = 'right';
@@ -280,7 +289,7 @@ export default function Home() {
     calcAnswered();
   }
 
-  function pressRButton(){
+  function pressRButton() {
     const button = document.getElementById('redButt');
     button.classList.add(styles.pressed);
     rwAnswers[indexQ] = 'wrong';
@@ -292,12 +301,12 @@ export default function Home() {
     calcAnswered();
   }
 
-  function handleFlip(){
+  function handleFlip() {
     const flashcard = document.getElementById('flashcard');
-    if(flashcard.classList.contains(styles.flipping)){
+    if (flashcard.classList.contains(styles.flipping)) {
       flashcard.classList.remove(styles.flipping);
     }
-    else{
+    else {
       flashcard.classList.add(styles.flipping);
     }
     flashcard.classList.toggle(styles.showback);
@@ -350,15 +359,27 @@ export default function Home() {
                 onChange={(f) => setAmountInput(f.target.value)}
                 min="1.0"
                 step="1"
-              required/>
+                required />
             </div>
 
             <input type="submit" class="submitButton" value="Generate questions" />
 
+
+            <div name="enableFeature">
+              <label>
+                <input
+                  type="checkbox"
+                  name="questionMode"
+                  checked={multiQuestions}
+                  onChange={(e) => setQuestionMode(e.target.checked)}
+                />
+                Fixed amount of questions
+              </label>
+            </div>
           </form>
         </div>
 
-        
+
         <div className={styles.result2}>
           <div className={styles.containerLeftArrow}>
             {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
@@ -379,7 +400,7 @@ export default function Home() {
           <button class={styles.red} id="redButt" onClick={pressRButton}>DON'T KNOW IT</button>
         </div>
         <div>Correct answers: {correctAnswers}/{answeredQuestions} </div>
-        <div>{Math.round(correctAnswers/answeredQuestions*100)}%</div>
+        <div>{Math.round(correctAnswers / answeredQuestions * 100)}%</div>
         <p className={styles.textarea}>Download File</p>
 
         <button className={styles.downloadUpload} id="downloadButton">

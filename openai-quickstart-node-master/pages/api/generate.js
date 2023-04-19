@@ -23,6 +23,8 @@ export default async function (req, res) {
     return;
   }
 
+
+  //definierar våra variabler från index
   const inputText = req.body.inputText || '';
   if (inputText.trim().length === 0) {
     res.status(400).json({
@@ -32,8 +34,20 @@ export default async function (req, res) {
     });
     return;
   }
+  const questionMode = req.body.questionMode || false;
 
-  const amount = req.body.amount || '';
+
+  const amount = req.body.amount || 0;
+  if (amount === 0 && questionMode==true) {
+    res.status(400).json({
+      error: {
+        message: "Please enter a valid number",
+      }
+    });
+    return;
+  }
+
+
   /*
   const animal = req.body.animal || '';
   if (animal.trim().length === 0) {
@@ -46,34 +60,70 @@ export default async function (req, res) {
   }
 */
   try {
-    const inputChunks = chunkInputText(inputText, 500); // break input into 250-character chunks
-    const nrOfQuestionsToGenerate = questionPerChunk(inputChunks, amount);
-    console.log("Antalet gånger: " + inputChunks.length);
-    const completionPromises = inputChunks.map(chunk => { //Vi verkar endast utföra loopen fyran gånger
-      const prompt = quizMePrompt(chunk, nrOfQuestionsToGenerate); // vi skapar en prompt för varje chunk, det kan bli för många frågor då får vi rensa senare
-      console.log("Detta är chunken vi skickar in i prompt: " + chunk);
-      console.log("Detta är antalet frågor som chunken ska besvara: " + nrOfQuestionsToGenerate);
-      console.log("Prompten: " + prompt);
-      return openai.createCompletion({
+    console.log(questionMode);
+
+    let completion = "";
+    var completions;
+
+    if(questionMode===false){
+      const inputChunks = chunkInputText(inputText, 200); // break input into 200-character chunks, mindre eftersom vi inte vill alltid ha samma frågor
+
+      const randomIndex = Math.floor(Math.random() * inputChunks.length);
+
+      const randomChunk = inputChunks[randomIndex];
+      const prompt = quizMePrompt(randomChunk, 1);
+
+
+       completion = await openai.createCompletion({ // call createCompletion once with the prompt
         model: "text-davinci-003",
         prompt: prompt,
-        temperature: 0.3,
+        temperature: 0.7,
         max_tokens: 3000,
         n: 1,
       });
-    });
-    const completions = await Promise.all(completionPromises);
-    console.log("HELA: " + completions);
-    
+
+      completions = [];
+      completions.push(completion); //neandertalar kod
+      
+    }
+    else{
+      const inputChunks = chunkInputText(inputText, 500); // break input into 250-character chunks
+      const nrOfQuestionsToGenerate = questionPerChunk(inputChunks, amount);
+      console.log("Antalet gånger: " + inputChunks.length);
+  
+  
+      const completionPromises = inputChunks.map(chunk => { //Vi verkar endast utföra loopen fyran gånger
+        const prompt = quizMePrompt(chunk, nrOfQuestionsToGenerate); // vi skapar en prompt för varje chunk, det kan bli för många frågor då får vi rensa senare
+        console.log("Detta är chunken vi skickar in i prompt: " + chunk);
+        console.log("Detta är antalet frågor som chunken ska besvara: " + nrOfQuestionsToGenerate);
+        console.log("Prompten: " + prompt);
+        return openai.createCompletion({
+          model: "text-davinci-003",
+          prompt: prompt,
+          temperature: 0.3,
+          max_tokens: 3000,
+          n: 1,
+        });
+      });
+      completions = await Promise.all(completionPromises);
+      console.log("HELA: " + completions);
+      
+    }
+
+   
     
 
     
     
-
+    console.log("DO WE REACH IT");
     const generatedTexts = completions.map(completion => completion.data.choices[0].text);
     console.log("alla skapade outputs: " + generatedTexts);
+    let tempAmount = amount;
+    if(questionMode===false){ //eftersom vi inte definierar amount om vi kör utan set amount of questions så sätter vi den till 1
+      tempAmount = 1;
+    }
     
-    const formattedResult = formatResult(generatedTexts.join('\n'), amount); // alla strängarna i arrayen slängs ihop och skickas iväg som ett argument
+    const formattedResult = formatResult(generatedTexts.join('\n'), tempAmount); // alla strängarna i arrayen slängs ihop och skickas iväg som ett argument
     
     res.status(200).json({ result: formattedResult });
   } catch (error) {
