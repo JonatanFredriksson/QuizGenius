@@ -254,12 +254,14 @@ export default function Home() {
 
             <div name="numberOfQuestions">
               <input
-                type="text"
+                type="number"
                 name="amount"
                 placeholder="Number of questions"
                 value={amountInput}
                 onChange={(f) => setAmountInput(f.target.value)}
-              />
+                min="1.0"
+                step="1"
+              required/>
             </div>
 
             <input type="submit" class="submitButton" value="Generate questions" />
