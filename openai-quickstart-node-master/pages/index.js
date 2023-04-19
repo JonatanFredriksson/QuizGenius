@@ -18,6 +18,9 @@ export default function Home() {
   const [first, setFirst] = useState("");
   const [downloadInProgress, setDownloadInProgress] = useState(false); // Add downloadInProgress state
 
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [answeredQuestions, setAnsweredQuestions] = useState(0);
+  const [rwAnswers, setRWAnswers] = useState([]);
   
   let qaPairsRef = useRef([]); // Ref to store updated qaPairs value
 
@@ -88,7 +91,7 @@ export default function Home() {
 
 
       //window.scrollTo(0, document.body.scrollHeight);
-      document.querySelector('#output').scrollIntoView({ behavior: 'smooth', block: 'end' });
+      document.getElementById('flashcard').scrollIntoView({ behavior: 'smooth', block: 'end' });
 
 
 
@@ -176,7 +179,9 @@ export default function Home() {
     setTextInput("");
     setAmountInput("");
     //setQAPairs(dataRes);
-
+    setCorrectAnswers(0);
+    setAnsweredQuestions(0);
+    initializeAnswered();
 
     console.log(dataRes);
 
@@ -187,15 +192,21 @@ export default function Home() {
     setFirst(true);
   }
 
+  function initializeAnswered(){
+    const unAnswered = new Array(amountInput).fill('unanswered');
+    setRWAnswers(unAnswered);
+  }
+
   function showNext() {
     if (indexQ + 1 < qaPairs.length) {
       setCurrentQuestion(qaPairs[indexQ + 1].question);
       setCurrentAnswer(qaPairs[indexQ + 1].answer);
+      removeFlip();
       if (indexQ + 1 == qaPairs.length - 1) {
         setLast(true);
       }
+      resetButtons(indexQ+1);
       setIndexQ(indexQ + 1);
-      setShowAnswers(false);
       setFirst(false);
     }
   }
@@ -204,16 +215,93 @@ export default function Home() {
     if (indexQ - 1 >= 0) {
       setCurrentQuestion(qaPairs[indexQ - 1].question);
       setCurrentAnswer(qaPairs[indexQ - 1].answer);
+      removeFlip();
       if (indexQ - 1 == 0) {
         setFirst(true);
       }
+      resetButtons(indexQ-1);
       setIndexQ(indexQ - 1);
-      setShowAnswers(false);
       setLast(false);
     }
   }
 
+  function removeFlip(){
+    const flashcard = document.getElementById('flashcard');
+      if(flashcard.classList.contains(styles.flipping)){
+        flashcard.classList.remove(styles.flipping);
+      }
+  }
 
+  function resetButtons(index){
+    if(rwAnswers[index]=='right'){
+      document.getElementById('greenButt').classList.add(styles.pressed);
+      document.getElementById('redButt').classList.remove(styles.pressed);
+    }
+    else if(rwAnswers[index]=='wrong'){
+      document.getElementById('redButt').classList.add(styles.pressed);
+      document.getElementById('greenButt').classList.remove(styles.pressed);
+    }
+    else{
+      document.getElementById('greenButt').classList.remove(styles.pressed);
+      document.getElementById('redButt').classList.remove(styles.pressed);
+    }
+  }
+
+  function handleBoxSize() {
+    var myBox = document.getElementById("thetextbox");
+    myBox.style.height = "auto";
+  }
+
+  function calcRightAnswers(){
+    let sum = 0;
+    for (let i = 0; i < rwAnswers.length; i++){
+      if (rwAnswers[i]=='right'){sum = sum + 1;}
+    }
+    console.log('calcRightAnswers:', sum);
+    setCorrectAnswers(sum);
+  }
+  function calcAnswered(){
+    let sum = 0;
+    for (let i = 0; i < rwAnswers.length; i++){
+      if (rwAnswers[i]=='right' || rwAnswers[i]=='wrong'){sum+=1;}
+    }
+    console.log('calcAnswered:', sum);
+    setAnsweredQuestions(sum);
+  }
+
+  function pressGButton(){
+    const button = document.getElementById('greenButt');
+    button.classList.add(styles.pressed);
+    rwAnswers[indexQ] = 'right';
+    console.log(rwAnswers);
+    const unpress = document.getElementById('redButt');
+    unpress.classList.remove(styles.pressed);
+    calcRightAnswers();
+    calcAnswered();
+  }
+
+  function pressRButton(){
+    const button = document.getElementById('redButt');
+    button.classList.add(styles.pressed);
+    rwAnswers[indexQ] = 'wrong';
+    console.log(rwAnswers);
+    const unpress = document.getElementById('greenButt');
+    unpress.classList.remove(styles.pressed);
+
+    calcRightAnswers();
+    calcAnswered();
+  }
+
+  function handleFlip(){
+    const flashcard = document.getElementById('flashcard');
+    if(flashcard.classList.contains(styles.flipping)){
+      flashcard.classList.remove(styles.flipping);
+    }
+    else{
+      flashcard.classList.add(styles.flipping);
+    }
+    flashcard.classList.toggle(styles.showback);
+  }
 
   return (
     <div>
@@ -237,6 +325,7 @@ export default function Home() {
           <form onSubmit={onSubmit}>
             <div class="textAreaInput">
               <textarea
+                id="thetextbox"
                 class="text-input"
                 type="text"
                 placeholder="Type your text: "
@@ -267,41 +356,34 @@ export default function Home() {
           </form>
         </div>
 
-        <div className={styles.result1}>
-          {qaPairs.length > 0 && (
-            <button
-              id="hideShowBTN"
-              className={styles.hideShow}
-              onClick={() => setShowAnswers(!showAnswers)}
-
-            >
-              {showAnswers ? "Hide Answers" : "Show Answers"}
-            </button>
-          )}
-        </div>
+        
         <div className={styles.result2}>
           <div className={styles.containerLeftArrow}>
             {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
           </div>
 
-          <div className={styles.questionAndAnswer} id="output">
-            {currentQuestion}
-            {showAnswers && <p className={styles.answer}> {currentAnswer}</p>}
+          <div class={styles.flashcard} onClick={handleFlip} id='flashcard'>
+            <div class={styles.front} id='back'>{currentQuestion}</div>
+            <div class={styles.back} id='front'>{currentAnswer}</div>
           </div>
 
           <div className={styles.containerRightArrow}>
             {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
           </div>
-
         </div>
+
+        <div class={styles.buttons}>
+          <button class={styles.green} id="greenButt" onClick={pressGButton}>KNOW IT WELL</button>
+          <button class={styles.red} id="redButt" onClick={pressRButton}>DON'T KNOW IT</button>
+        </div>
+        <div>Correct answers: {correctAnswers}/{answeredQuestions} </div>
+        <div>{Math.round(correctAnswers/answeredQuestions*100)}%</div>
         <p className={styles.textarea}>Download File</p>
 
         <button className={styles.downloadUpload} id="downloadButton">
           <img src="/DownloadIconTransparent.png" className={styles.iconDownload} />
 
         </button>
-
-
 
         <div className={styles.uploadFileButton}>
           <label htmlFor="fileInput" className={styles.customFileInput}>

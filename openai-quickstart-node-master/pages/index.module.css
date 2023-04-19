@@ -26,13 +26,7 @@
   
 }
 
-.main .hideShow {
-  background-color: #d34e3c ;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
+
 .main .icon {
   width: 300px;
   height: fit-content;
@@ -115,9 +109,8 @@ main .iconDownload {
   border: none;
   background-color: transparent;
   cursor: pointer;
-
-
 }
+
 .main .buttonright {
   background-image: url('/arrow_right.png');
   background-size: 100% 100%;
@@ -127,6 +120,37 @@ main .iconDownload {
   cursor: pointer;
 
 }
+
+.main .buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  background-color: white;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.main .green.pressed {
+  background-color: rgb(156, 193, 156);
+  color: white;
+  box-shadow: 0px 0px 5px #888;
+}
+
+.main .green {
+  color: green; 
+}
+
+.main .red.pressed{
+  background-color: #b07f78;
+  color: white;
+  box-shadow: 0px 0px 5px #888;
+}
+
+.main .red {
+  color: #d34e3c;
+}
+
+
 .main .questionAndAnswer {
   width: 300px;
   display: inline-block;
@@ -168,13 +192,7 @@ main .iconDownload {
   margin-bottom: 0px;
 }
 
-.hideShowBTN{
-  padding: 20px;
-  margin: 0px 40px 0px 40px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
-  background-color: #d34e3c !important;
-  color:#fff;
-}
+
 
 .downloadUpload{
   margin: 0px 40px 0px 40px;
@@ -233,4 +251,45 @@ main .iconDownload {
 .customFileInput:hover {
   /* Change the background color on hover */
   background-color: #e0e0e0;
+}
+
+.main .flashcard {
+  position: relative;
+  background-color: #d34e3c;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+  width: 300px;
+  height: auto;
+  display: inline-block;
+  border: #000000;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 25px;
+  padding: 20px;
+  margin: 0px 40px 0px 40px;
+}
+
+.main .front, .main .back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  backface-visibility: hidden;
+  font-size: 16px;
+  line-height: 40px;
+}
+
+.main .back {
+  transform: rotateY(-180deg);
+}
+
+.main .show-back {
+  transform: rotateY(-180deg);
+}
+
+.main .flipping {
+  transform: rotateY(180deg);
+  transition: transform 0.5s;
 }
