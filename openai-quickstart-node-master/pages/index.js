@@ -244,7 +244,7 @@ export default function Home() {
           <div class={styles.flashcard} onClick={handleFlip} id='flashcard'>
             <div class={styles.front} id='back'>{currentQuestion}</div>
             <div class={styles.back} id='front'>{currentAnswer}</div>
-        - </div>
+          </div>
 
           <div className={styles.containerRightArrow}>
             {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
