@@ -131,38 +131,23 @@ main .iconDownload {
 }
 
 .main .green.pressed {
-  background-color: rgb(156, 193, 156);
+  background-color: green;
   color: white;
-  box-shadow: 0px 0px 5px #888;
 }
 
 .main .green {
   color: green; 
+  margin-right: 10px;
 }
 
 .main .red.pressed{
-  background-color: #b07f78;
+  background-color: #d34e3c;
   color: white;
-  box-shadow: 0px 0px 5px #888;
 }
 
 .main .red {
   color: #d34e3c;
-}
-
-
-.main .questionAndAnswer {
-  width: 300px;
-  display: inline-block;
-  border: #000000;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 25px;
-  padding: 20px;
-  margin: 0px 40px 0px 40px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
-  background-color: #d34e3c;
-  color:#fff;
+  margin-left: 10px;
 }
 
 .main .containerLeftArrow {
@@ -208,9 +193,6 @@ main .iconDownload {
 }
 .downloadUpload:hover{
   background-color: #e0e0e0;
-
-
-
 }
 
 #hiddenText {
@@ -253,13 +235,11 @@ main .iconDownload {
   background-color: #e0e0e0;
 }
 
-.main .flashcard {
-  position: relative;
-  background-color: #d34e3c;
+.flashcard {
   transform-style: preserve-3d;
   transition: transform 0.5s;
   width: 300px;
-  height: auto;
+  height: fit-content;
   display: inline-block;
   border: #000000;
   border-style: solid;
@@ -267,29 +247,35 @@ main .iconDownload {
   border-radius: 25px;
   padding: 20px;
   margin: 0px 40px 0px 40px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+  background-color: #d34e3c;
+  color:#000000;
 }
 
-.main .front, .main .back {
+.front, .back {
   position: absolute;
+  margin: 20px 20px 20px 20px;
   top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   text-align: center;
   backface-visibility: hidden;
-  font-size: 16px;
   line-height: 40px;
+  height: fit-content;
 }
 
-.main .back {
+.front {
+  left:0;
+}
+
+.back {
+  transform: rotateY(-180deg);
+  right: 0;
+}
+
+.show-back {
   transform: rotateY(-180deg);
 }
 
-.main .show-back {
-  transform: rotateY(-180deg);
-}
-
-.main .flipping {
+.flipping {
   transform: rotateY(180deg);
   transition: transform 0.5s;
 }

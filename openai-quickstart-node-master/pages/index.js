@@ -9,8 +9,6 @@ export default function Home() {
   const [amountInput, setAmountInput] = useState("");
   const [qaPairs, setQAPairs] = useState([]);
 
-
-  const [showAnswers, setShowAnswers] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [indexQ, setIndexQ] = useState();
   const [currentAnswer, setCurrentAnswer] = useState("");
@@ -188,7 +186,8 @@ export default function Home() {
     setIndexQ(0);
     setCurrentQuestion(dataRes[0].question);
     setCurrentAnswer(dataRes[0].answer);
-    setLast(false);
+    if(amountInput>1){setLast(false);}
+    else{setLast(true)}
     setFirst(true);
   }
 
@@ -209,6 +208,7 @@ export default function Home() {
       setIndexQ(indexQ + 1);
       setFirst(false);
     }
+    handleFlashcardHeight('front');
   }
 
   function showPrevious() {
@@ -223,6 +223,7 @@ export default function Home() {
       setIndexQ(indexQ - 1);
       setLast(false);
     }
+    handleFlashcardHeight('front');
   }
 
   function removeFlip(){
@@ -292,12 +293,23 @@ export default function Home() {
     calcAnswered();
   }
 
+  function handleFlashcardHeight(side){
+    const fcside = document.getElementById(side);
+    const flashcard = document.getElementById('flashcard');
+    flashcard.style.height = fcside.offsetHeight + 'px';
+
+  }
+
   function handleFlip(){
     const flashcard = document.getElementById('flashcard');
+    const front = document.getElementById('front');
+    const back = document.getElementById('back');
     if(flashcard.classList.contains(styles.flipping)){
+      handleFlashcardHeight('front');
       flashcard.classList.remove(styles.flipping);
     }
     else{
+      handleFlashcardHeight('back');
       flashcard.classList.add(styles.flipping);
     }
     flashcard.classList.toggle(styles.showback);
@@ -353,7 +365,7 @@ export default function Home() {
               required/>
             </div>
 
-            <input type="submit" class="submitButton" value="Generate questions" />
+            <input type="submit" class="submitButton" value="Generate questions" onClick={handleBoxSize}/>
 
           </form>
         </div>
@@ -364,9 +376,9 @@ export default function Home() {
             {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
           </div>
 
-          <div class={styles.flashcard} onClick={handleFlip} id='flashcard'>
-            <div class={styles.front} id='back'>{currentQuestion}</div>
-            <div class={styles.back} id='front'>{currentAnswer}</div>
+          <div className={styles.flashcard} onClick={handleFlip} id='flashcard'>
+            <div className={styles.front} id='front' > {currentQuestion}</div>
+            <div className={styles.back} id='back'>{currentAnswer}</div>
           </div>
 
           <div className={styles.containerRightArrow}>
