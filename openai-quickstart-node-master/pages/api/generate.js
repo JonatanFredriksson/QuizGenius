@@ -63,9 +63,9 @@ export default async function (req, res) {
     console.log(questionMode);
 
     let completion = "";
-    var completions;
+    let completions = [];
 
-    if(questionMode===false){
+    if(questionMode===true){ //vi kör  en fråga modet
       const inputChunks = chunkInputText(inputText, 200); // break input into 200-character chunks, mindre eftersom vi inte vill alltid ha samma frågor
 
       const randomIndex = Math.floor(Math.random() * inputChunks.length);
@@ -74,7 +74,7 @@ export default async function (req, res) {
       const prompt = quizMePrompt(randomChunk, 1);
 
 
-       completion = await openai.createCompletion({ // call createCompletion once with the prompt
+      completion = await openai.createCompletion({ // call createCompletion once with the prompt
         model: "text-davinci-003",
         prompt: prompt,
         temperature: 0.7,
@@ -82,11 +82,10 @@ export default async function (req, res) {
         n: 1,
       });
 
-      completions = [];
       completions.push(completion); //neandertalar kod
       
     }
-    else{
+    else{ // vi kör flera flera frågor modet
       const inputChunks = chunkInputText(inputText, 500); // break input into 250-character chunks
       const nrOfQuestionsToGenerate = questionPerChunk(inputChunks, amount);
       console.log("Antalet gånger: " + inputChunks.length);
@@ -119,13 +118,13 @@ export default async function (req, res) {
     const generatedTexts = completions.map(completion => completion.data.choices[0].text);
     console.log("alla skapade outputs: " + generatedTexts);
     let tempAmount = amount;
-    if(questionMode===false){ //eftersom vi inte definierar amount om vi kör utan set amount of questions så sätter vi den till 1
+    if(questionMode===true){ //eftersom vi inte definierar amount om vi kör utan set amount of questions så sätter vi den till 1
       tempAmount = 1;
     }
     
     const formattedResult = formatResult(generatedTexts.join('\n'), tempAmount); // alla strängarna i arrayen slängs ihop och skickas iväg som ett argument
     
-    res.status(200).json({ result: formattedResult });
+    res.status(200).json({ result: formattedResult, questionMode: questionMode});
   } catch (error) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {

@@ -22,10 +22,23 @@ export default function Home() {
   const [answeredQuestions, setAnsweredQuestions] = useState(0);
   const [rwAnswers, setRWAnswers] = useState([]);
 
-  const [multiQuestions, setQuestionMode] = useState(true);
+  const [multiQuestions, setQuestionMode] = useState(false);
 
   let qaPairsRef = useRef([]); // Ref to store updated qaPairs value
 
+
+
+  function handleSwitchChange(e) {
+    console.log("YOYOYO");
+    if (e.target.checked) {
+      setAmountInput("1");
+      console.log("vi sätter amount till 1");
+    } else {
+      setAmountInput("");
+      console.log("vi sätter inte amount till 1");
+
+    }
+  }
   useEffect(() => {
     // Fetch the most recently stored QA pair from local storage
     localforage.getItem("qaPairs").then((storedQAPairs) => {
@@ -47,6 +60,9 @@ export default function Home() {
     // Add event listener to download button
     const downloadButton = document.getElementById("downloadButton");
     downloadButton.addEventListener("click", downloadFlashcards); // Update to use the downloadFlashcards function
+
+
+
 
     // Cleanup: remove event listener when component unmounts
     return () => {
@@ -71,14 +87,43 @@ export default function Home() {
       if (response.status !== 200) {
         throw data.error || new Error(`Request failed with status ${response.status}`);
       }
-      localforage.setItem("qaPairs", data.result);
 
-      qaPairsRef.current = (data.result);
+      let updatedQaPairs = data.result;
+      console.log(updatedQaPairs);
+      let multiQuestionsBool = (data.questionMode);
+      if (multiQuestionsBool == true) { //vi ska concatenera till våran redan existerande qaPairs innan vi setter nya
+
+        console.log("YIPPI");
+        let oldQAPairs = [];
+        //let temp = localforage.getItem("qaPairs");
+        let temp = await localforage.getItem("qaPairs");
+
+        console.log("INSIDE: " + temp);
+        if (temp === null || temp.length === 0) {
+          // The qaPairs array is empty or null, vi kan skriva över
+
+          updatedQaPairs = (data.result);
+        } else {
+          // The qaPairs array has elements, vi adderar den nyaste till den existerande
+          //temp.push(data.result);
+          updatedQaPairs = temp.concat(data.result);
+        }
+        console.log("Updated" + updatedQaPairs);
+
+      }
+
+
+
+      localforage.setItem("qaPairs", updatedQaPairs);
+
+
+
+      qaPairsRef.current = updatedQaPairs;
       //setActiveDownload(true); //does seem to not do anything since it resets
 
       //setResult(data.result);
-      console.log("This is the data: " + data.result);
-      const formattedResult = (data.result); //formateringen måste nu ändras när vi ändrat datastrukturen, vi skippar detta steg, formatterar i generate istället
+      console.log("This is the data: " + updatedQaPairs);
+      const formattedResult = (updatedQaPairs); //formateringen måste nu ändras när vi ändrat datastrukturen, vi skippar detta steg, formatterar i generate istället
       setQAPairs(formattedResult); //vi sätter datan i variabeln qaPairs
 
 
@@ -99,7 +144,13 @@ export default function Home() {
 
       //console.log(trimUnfinishedSentences(data.result)); //fungerar inte just nu med arrayen
 
-      initializeArrows(formattedResult);
+      if(multiQuestionsBool ===true){
+        jumpToTheLast(formattedResult);
+      }
+      else{
+        initializeArrows(formattedResult);
+
+      }
       const downloadButton = document.getElementById("downloadButton");
       /*downloadButton.addEventListener("click", function () {
         downloadFlashcards(formattedResult);
@@ -181,23 +232,27 @@ export default function Home() {
     setTextInput("");
     setAmountInput("");
     //setQAPairs(dataRes);
-    setCorrectAnswers(0);
-    setAnsweredQuestions(0);
-    initializeAnswered();
+    setCorrectAnswers(0); //resetting green button
+    setAnsweredQuestions(0);//resetting whole amount of answered question (not answered)
+    initializeAnswered(); //resetting data so its all unanswered
 
     console.log(dataRes);
 
-    setIndexQ(0);
-    setCurrentQuestion(dataRes[0].question);
-    setCurrentAnswer(dataRes[0].answer);
-    if(amountInput> 1){
+    setIndexQ(0); //sets it to the first question
+    setCurrentQuestion(dataRes[0].question); //sets to first question
+    setCurrentAnswer(dataRes[0].answer); //sets to first answer
+    console.log("AmountINput:  " + amountInput);
+    if (amountInput > 1) { //om vi bara har en så ska arrows inte komma upp, dock måste exception finnas eftersom vi nu har generate question en i taget, så vi har multiquestion boolen som en check, om den är false så är det ett antal frågor och vi gör nytt, 
       setLast(false);
 
     }
-    else{
+   
+    else { //i detta fall är amount of questions mer än 1 alltså flera, frågor så vi vill bläddra med arrows, eller så är det kanske bara en men den adderas till, så vi vill fortfarande kunnabläddra
       setLast(true);
-
+      console.log("TO");
     }
+
+    //egentligen borde det ändras så att vi sätter set last till true om multiquestionBool är sann
     setFirst(true);
   }
 
@@ -206,7 +261,21 @@ export default function Home() {
     setRWAnswers(unAnswered);
   }
 
+
+  function jumpToTheLast(dataRes){
+
+
+    let newIndex = (dataRes.length - 1);
+    setIndexQ(newIndex);
+    setCurrentQuestion(dataRes[newIndex].question); //sets to first question
+    setCurrentAnswer(dataRes[newIndex].answer); //sets to first answer
+    setLast(true);
+    setFirst(false);
+  }
+
   function showNext() {
+    console.log("Next" + indexQ);
+
     if (indexQ + 1 < qaPairs.length) {
       setCurrentQuestion(qaPairs[indexQ + 1].question);
       setCurrentAnswer(qaPairs[indexQ + 1].answer);
@@ -221,6 +290,7 @@ export default function Home() {
   }
 
   function showPrevious() {
+    console.log("Prev" + indexQ);
     if (indexQ - 1 >= 0) {
       setCurrentQuestion(qaPairs[indexQ - 1].question);
       setCurrentAnswer(qaPairs[indexQ - 1].answer);
@@ -312,6 +382,18 @@ export default function Home() {
     flashcard.classList.toggle(styles.showback);
   }
 
+
+  const generateSingleQuestion = () => {
+    if (multiQuestions === true) {
+      console.log("Vi kör en fråga i taget");
+      setAmountInput(1);
+    }
+    const form = document.getElementById("qaForm");
+    console.log(form);
+    const event = new Event("submit", { cancelable: true });
+    form.dispatchEvent(event);
+  };
+
   return (
     <div>
       <Head>
@@ -331,7 +413,7 @@ export default function Home() {
 
         </div>
         <div class="containerForm">
-          <form onSubmit={onSubmit}>
+          <form onSubmit={onSubmit} id="qaForm">
             <div class="textAreaInput">
               <textarea
                 id="thetextbox"
@@ -349,33 +431,46 @@ export default function Home() {
               ></textarea>
             </div>
 
+            <label className={styles.labelForMode}>Switch modes</label>
 
-            <div name="numberOfQuestions">
+            <div className={styles.enableFeature}>
+
+
+              <input
+                type="checkbox"
+                name="questionMode"
+                checked={multiQuestions}
+                onChange={(e) => {
+                  setQuestionMode(e.target.checked);
+                  handleSwitchChange(e); // Pass the event object to the function
+                }}
+                className={styles.switch}
+              />
+              <span className={styles.slider}></span>
+
+            </div>
+            <input type="submit" className={styles.submitButtonSingle} value="Generate question" onClick={() => generateSingleQuestion()} style={{ display: multiQuestions ? "inline-block" : "none" }}
+            />
+
+            <div name="numberOfQuestions" className={multiQuestions ? styles.hidden : ""}>
               <input
                 type="number"
                 name="amount"
                 placeholder="Number of questions"
                 value={amountInput}
                 onChange={(f) => setAmountInput(f.target.value)}
-                min="1.0"
+                //min="1.0"
                 step="1"
-                required />
+              //required 
+              />
             </div>
 
-            <input type="submit" class="submitButton" value="Generate questions" />
 
 
-            <div name="enableFeature">
-              <label>
-                <input
-                  type="checkbox"
-                  name="questionMode"
-                  checked={multiQuestions}
-                  onChange={(e) => setQuestionMode(e.target.checked)}
-                />
-                Fixed amount of questions
-              </label>
-            </div>
+            <input type="submit" class="submitButton" value="Generate questions" style={{ display: multiQuestions ? "none" : "inline-block" }} />
+
+
+
           </form>
         </div>
 
@@ -392,6 +487,13 @@ export default function Home() {
 
           <div className={styles.containerRightArrow}>
             {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
+          </div>
+        </div>
+
+        <div className="generateSingleQuestion">
+
+          <div className={styles.generateSingleQuestion}>
+            {<button className={styles.generateSingleQuestion} onClick={() => generateSingleQuestion()}> One More Question</button>}
           </div>
         </div>
 
