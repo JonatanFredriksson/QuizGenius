@@ -471,7 +471,11 @@ export default function Home() {
             {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
           </div>
 
-          <div className={styles.questionAndAnswer} id='flashcard' onClick={() => flipCard()}>
+          <div 
+            className={styles.questionAndAnswer} 
+            title='Click to flip the flashcard.'
+            id='flashcard' 
+            onClick={() => flipCard()}>
             {shownText}
           </div>
 
