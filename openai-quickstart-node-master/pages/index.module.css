@@ -56,7 +56,10 @@ main .iconDownload {
   border: 1px solid #27ae60;
   border-radius: 4px;
   margin-bottom: 24px;
-  outline-color: #2c3e50;;
+  outline-color: #2c3e50;
+  
+  
+  
   width: min-content;
   flex-direction: column;
   align-items: center;
@@ -66,12 +69,12 @@ main .iconDownload {
   border: 1px solid #27ae60;
   border-radius: 4px;
   margin-bottom: 24px;
-  outline-color: #2980b924;
+  outline-color: #09182224;
   width: 80vh;
   height: 10vh;
   display: block;
   resize: none;
-  background-color: #2980b924
+  background-color: #297fb913
 }
 .main ::placeholder {
   color: #000000;
@@ -103,6 +106,7 @@ main .iconDownload {
   vertical-align: middle;
   text-align: center;
   position: relative;
+
 }
 
 .main .buttonleft {
@@ -140,7 +144,25 @@ main .iconDownload {
 }
 
 .main .green {
-  color: green; 
+  color: #27ae60; 
+  /* Add some padding to the button */
+  padding: 10px 20px;
+  /* Add a border */
+  border: #000000;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 25px;
+  /* Add some hover effect */
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  border-radius: 25px;
+  margin: 10px 10px 10px 10px;
+  transition: all 1.5s ease-out; /* added transition property */
+
+}
+
+.main .green:hover{
+  background-color: #27ae5f70;
 }
 
 .main .red.pressed{
@@ -151,6 +173,23 @@ main .iconDownload {
 
 .main .red {
   color: #d34e3c;
+  /* Add some padding to the button */
+  padding: 10px 20px;
+  /* Add a border */
+  border: #000000;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 25px;
+  /* Add some hover effect */
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  border-radius: 25px;
+  margin: 10px 10px 10px 10px;
+  transition: all 1.5s ease-out; /* added transition property */
+
+}
+.main .red:hover{
+background-color: #d34e3c7a;
 }
 
 
@@ -210,7 +249,7 @@ main .iconDownload {
 
 }
 .downloadUpload:hover{
-  background-color: #e0e0e0;
+  background-color: #27ae60;
 
 
 
@@ -253,7 +292,7 @@ main .iconDownload {
 }
 .customFileInput:hover {
   /* Change the background color on hover */
-  background-color: #e0e0e0;
+  background-color: #27ae60;
 }
 
 .main .flashcard {
@@ -285,6 +324,7 @@ main .iconDownload {
   backface-visibility: hidden;
   font-size: 16px;
   line-height: 40px;
+  padding: 20px;
 }
 
 .main .back {

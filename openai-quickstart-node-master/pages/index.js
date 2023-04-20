@@ -146,10 +146,10 @@ export default function Home() {
 
       //console.log(trimUnfinishedSentences(data.result)); //fungerar inte just nu med arrayen
 
-      if(multiQuestionsBool ===true){
+      if (multiQuestionsBool === true) {
         jumpToTheLast(formattedResult);
       }
-      else{
+      else {
         initializeArrows(formattedResult);
 
       }
@@ -248,7 +248,7 @@ export default function Home() {
       setLast(false);
 
     }
-   
+
     else { //i detta fall är amount of questions mer än 1 alltså flera, frågor så vi vill bläddra med arrows, eller så är det kanske bara en men den adderas till, så vi vill fortfarande kunnabläddra
       setLast(true);
       console.log("TO");
@@ -264,7 +264,7 @@ export default function Home() {
   }
 
 
-  function jumpToTheLast(dataRes){
+  function jumpToTheLast(dataRes) {
 
 
     let newIndex = (dataRes.length - 1);
@@ -382,13 +382,13 @@ export default function Home() {
     if (flashcard.classList.contains(styles.flipping)) {
       flashcard.classList.remove(styles.flipping);
       setAnswerShowing(false);
-      
+
     }
     else {
       flashcard.classList.add(styles.flipping);
       setAnswerShowing(true);
       console.log("Vi klickar för att revela answer " + answerShowing);
-      
+
     }
     flashcard.classList.toggle(styles.showback);
   }
@@ -460,7 +460,7 @@ export default function Home() {
               <span className={styles.slider}></span>
 
             </div>
-            <input type="submit" className={styles.submitButtonSingle} value="Generate question" onClick={() => generateSingleQuestion()} style={{ display: multiQuestions ? "inline-block" : "none" }} />
+            <input type="submit" className={styles.submitButtonSingle} value="Generate one question" onClick={() => generateSingleQuestion()} style={{ display: multiQuestions ? "inline-block" : "none" }} />
 
 
             <div name="numberOfQuestions" className={multiQuestions ? styles.hidden : ""}>
@@ -501,13 +501,15 @@ export default function Home() {
           </div>
         </div>
 
-        
+
         <div class={styles.buttons}>
           <button class={styles.green} id="greenButt" onClick={pressGButton}>KNOW IT WELL</button>
           <button class={styles.red} id="redButt" onClick={pressRButton}>DON'T KNOW IT</button>
         </div>
-        <div>Correct answers: {correctAnswers}/{answeredQuestions} </div>
-        <div>{Math.round(correctAnswers / answeredQuestions * 100)}%</div>
+        <div>
+          Correct answers: {correctAnswers}/{answeredQuestions}{" "}
+        </div>
+        {answeredQuestions === 0 ? (<div>No questions answered yet</div>) : (<div>{Math.round((correctAnswers / answeredQuestions) * 100)}%</div>)}
         <p className={styles.textarea}>Download File</p>
 
         <button className={styles.downloadUpload} id="downloadButton">
