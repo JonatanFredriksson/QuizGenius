@@ -10,7 +10,7 @@ export default function Home() {
   const [qaPairs, setQAPairs] = useState([]);
 
 
-  const [showAnswers, setShowAnswers] = useState(false);
+  const [shownText, setShownText] = useState("");
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [indexQ, setIndexQ] = useState();
   const [currentAnswer, setCurrentAnswer] = useState("");
@@ -241,7 +241,7 @@ export default function Home() {
     setIndexQ(0); //sets it to the first question
     setCurrentQuestion(dataRes[0].question); //sets to first question
     setCurrentAnswer(dataRes[0].answer); //sets to first answer
-    console.log("AmountINput:  " + amountInput);
+    setShownText(dataRes[0].question);
     if (amountInput > 1) { //om vi bara har en så ska arrows inte komma upp, dock måste exception finnas eftersom vi nu har generate question en i taget, så vi har multiquestion boolen som en check, om den är false så är det ett antal frågor och vi gör nytt, 
       setLast(false);
 
@@ -269,6 +269,7 @@ export default function Home() {
     setIndexQ(newIndex);
     setCurrentQuestion(dataRes[newIndex].question); //sets to first question
     setCurrentAnswer(dataRes[newIndex].answer); //sets to first answer
+    setShownText(dataRes[newIndex].question);
     setLast(true);
     setFirst(false);
   }
@@ -277,9 +278,9 @@ export default function Home() {
     console.log("Next" + indexQ);
 
     if (indexQ + 1 < qaPairs.length) {
+      setShownText(qaPairs[indexQ + 1].question);
       setCurrentQuestion(qaPairs[indexQ + 1].question);
       setCurrentAnswer(qaPairs[indexQ + 1].answer);
-      removeFlip();
       if (indexQ + 1 == qaPairs.length - 1) {
         setLast(true);
       }
@@ -290,24 +291,16 @@ export default function Home() {
   }
 
   function showPrevious() {
-    console.log("Prev" + indexQ);
     if (indexQ - 1 >= 0) {
+      setShownText(qaPairs[indexQ - 1].question);
       setCurrentQuestion(qaPairs[indexQ - 1].question);
       setCurrentAnswer(qaPairs[indexQ - 1].answer);
-      removeFlip();
       if (indexQ - 1 == 0) {
         setFirst(true);
       }
       resetButtons(indexQ - 1);
       setIndexQ(indexQ - 1);
       setLast(false);
-    }
-  }
-
-  function removeFlip() {
-    const flashcard = document.getElementById('flashcard');
-    if (flashcard.classList.contains(styles.flipping)) {
-      flashcard.classList.remove(styles.flipping);
     }
   }
 
@@ -371,16 +364,14 @@ export default function Home() {
     calcAnswered();
   }
 
-  function handleFlip() {
-    const flashcard = document.getElementById('flashcard');
-    if (flashcard.classList.contains(styles.flipping)) {
-      flashcard.classList.remove(styles.flipping);
+  function flipCard(){
+    if (shownText == currentQuestion){
+      setShownText(currentAnswer);
     }
     else {
-      flashcard.classList.add(styles.flipping);
+      setShownText(currentQuestion);
     }
-    flashcard.classList.toggle(styles.showback);
-  }
+}
 
 
   const generateSingleQuestion = () => {
@@ -449,7 +440,7 @@ export default function Home() {
               <span className={styles.slider}></span>
 
             </div>
-            <input type="submit" className={styles.submitButtonSingle} value="Generate question" onClick={() => generateSingleQuestion()} style={{ display: multiQuestions ? "inline-block" : "none" }}
+            <input type="submit" className={styles.submitButtonSingle} value="Generate question" onClick={() => {generateSingleQuestion(); handleBoxSize()}} style={{ display: multiQuestions ? "inline-block" : "none" }}
             />
 
             <div name="numberOfQuestions" className={multiQuestions ? styles.hidden : ""}>
@@ -480,9 +471,8 @@ export default function Home() {
             {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
           </div>
 
-          <div class={styles.flashcard} onClick={handleFlip} id='flashcard'>
-            <div class={styles.front} id='back'>{currentQuestion}</div>
-            <div class={styles.back} id='front'>{currentAnswer}</div>
+          <div className={styles.questionAndAnswer} id='flashcard' onClick={() => flipCard()}>
+            {shownText}
           </div>
 
           <div className={styles.containerRightArrow}>
