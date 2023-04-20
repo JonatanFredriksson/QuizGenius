@@ -71,7 +71,7 @@ export default async function (req, res) {
       const randomIndex = Math.floor(Math.random() * inputChunks.length);
 
       const randomChunk = inputChunks[randomIndex];
-      const prompt = quizMePrompt(randomChunk, 1);
+      const prompt = `Give me a question and corresponding answer different from the previous ones on the specific text, in the format of: \nQ: question \nA: answer. \nTry to answer in the same language as the provided notes. Example Output: \nQ: What is the capital of France?\nA: The capital of France is Paris. \nQ: What is the capital of Germany?\nA: The capital of Germany is Berlin.\nThe following is the text to analyze: ${randomChunk} \n:END OF INPUT TEXT TO ANALYZE`;
 
 
       completion = await openai.createCompletion({ // call createCompletion once with the prompt
@@ -147,11 +147,11 @@ function quizMePrompt(input, amount) {
     
   }
   if(amount == 1){
-    return `Give me ${amount} question and corresponding answer on the a specific text, in the format of, \nQ: question \nA: answer. \nTry to answer in the same language as the provided notes. Example Output: \nQ: What is the capital of France?\nA: The capital of France is Paris. \nThe following is the text to analyze: ${input} \n:END OF INPUT TEXT TO ANALYZE`;
+    return `Give me ${amount} question and corresponding answer on the specific text, in the format of, \nQ: question \nA: answer. \nTry to answer in the same language as the provided notes. Example Output: \nQ: What is the capital of France?\nA: The capital of France is Paris. \nThe following is the text to analyze: ${input} \n:END OF INPUT TEXT TO ANALYZE`;
 
   }
   else {
-    return `Give me ${amount} questions and corresponding answers on the a specific text, in the format of: \nQ: question \nA: answer. \nTry to answer in the same language as the provided notes. Example Output: \nQ: What is the capital of France?\nA: The capital of France is Paris. \nQ: What is the capital of Germany?\nA: The capital of Germany is Berlin.\nThe following is the text to analyze: ${input} \n:END OF INPUT TEXT TO ANALYZE`;
+    return `Give me ${amount} questions and corresponding answers on the specific text, in the format of: \nQ: question \nA: answer. \nTry to answer in the same language as the provided notes. Example Output: \nQ: What is the capital of France?\nA: The capital of France is Paris. \nQ: What is the capital of Germany?\nA: The capital of Germany is Berlin.\nThe following is the text to analyze: ${input} \n:END OF INPUT TEXT TO ANALYZE`;
 
   }
 
