@@ -24,6 +24,8 @@ export default function Home() {
 
   const [multiQuestions, setQuestionMode] = useState(false);
 
+  const [answerShowing, setAnswerShowing] = useState(false);
+
   let qaPairsRef = useRef([]); // Ref to store updated qaPairs value
 
 
@@ -276,6 +278,7 @@ export default function Home() {
   function showNext() {
     console.log("Next" + indexQ);
 
+    setAnswerShowing(false);
     if (indexQ + 1 < qaPairs.length) {
       setCurrentQuestion(qaPairs[indexQ + 1].question);
       setCurrentAnswer(qaPairs[indexQ + 1].answer);
@@ -290,6 +293,8 @@ export default function Home() {
   }
 
   function showPrevious() {
+    setAnswerShowing(false);
+
     console.log("Prev" + indexQ);
     if (indexQ - 1 >= 0) {
       setCurrentQuestion(qaPairs[indexQ - 1].question);
@@ -372,12 +377,18 @@ export default function Home() {
   }
 
   function handleFlip() {
+
     const flashcard = document.getElementById('flashcard');
     if (flashcard.classList.contains(styles.flipping)) {
       flashcard.classList.remove(styles.flipping);
+      setAnswerShowing(false);
+      
     }
     else {
       flashcard.classList.add(styles.flipping);
+      setAnswerShowing(true);
+      console.log("Vi klickar för att revela answer " + answerShowing);
+      
     }
     flashcard.classList.toggle(styles.showback);
   }
@@ -395,7 +406,7 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className={styles.outerouterContainer}>
       <Head>
         <title>QuizGenius</title>
         <link rel="icon" href="/QuizGenius-Q.png" />
@@ -449,8 +460,8 @@ export default function Home() {
               <span className={styles.slider}></span>
 
             </div>
-            <input type="submit" className={styles.submitButtonSingle} value="Generate question" onClick={() => generateSingleQuestion()} style={{ display: multiQuestions ? "inline-block" : "none" }}
-            />
+            <input type="submit" className={styles.submitButtonSingle} value="Generate question" onClick={() => generateSingleQuestion()} style={{ display: multiQuestions ? "inline-block" : "none" }} />
+
 
             <div name="numberOfQuestions" className={multiQuestions ? styles.hidden : ""}>
               <input
@@ -480,9 +491,9 @@ export default function Home() {
             {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
           </div>
 
-          <div class={styles.flashcard} onClick={handleFlip} id='flashcard'>
-            <div class={styles.front} id='back'>{currentQuestion}</div>
-            <div class={styles.back} id='front'>{currentAnswer}</div>
+          <div class={styles.flashcard} onClick={handleFlip} id='flashcard' >
+            <div class={styles.front} id='front' style={{ display: answerShowing ? "none" : "inline-block" }}>{currentQuestion} </div>
+            <div class={styles.back} id='back' style={{ display: answerShowing ? "inline-block" : "none" }}>{currentAnswer}</div>
           </div>
 
           <div className={styles.containerRightArrow}>
@@ -490,13 +501,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="generateSingleQuestion">
-
-          <div className={styles.generateSingleQuestion}>
-            {<button className={styles.generateSingleQuestion} onClick={() => generateSingleQuestion()}> One More Question</button>}
-          </div>
-        </div>
-
+        
         <div class={styles.buttons}>
           <button class={styles.green} id="greenButt" onClick={pressGButton}>KNOW IT WELL</button>
           <button class={styles.red} id="redButt" onClick={pressRButton}>DON'T KNOW IT</button>

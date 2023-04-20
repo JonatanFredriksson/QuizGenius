@@ -1,4 +1,6 @@
-
+.outerouterContainer {
+ 
+}
 
 .main,
 .main input {
@@ -51,24 +53,25 @@ main .iconDownload {
 }
 .main input[type="number"] {
   padding: 12px 16px;
-  border: 1px solid #d34e3c;
+  border: 1px solid #27ae60;
   border-radius: 4px;
   margin-bottom: 24px;
-  outline-color: #d34e3c;
+  outline-color: #2c3e50;;
   width: min-content;
   flex-direction: column;
   align-items: center;
 }
 .main textarea[type="text"] {
   padding: 20px 20px;
-  border: 1px solid #d34e3c;
+  border: 1px solid #27ae60;
   border-radius: 4px;
   margin-bottom: 24px;
-  outline-color: #d34e3c;
+  outline-color: #2980b924;
   width: 80vh;
   height: 10vh;
   display: block;
   resize: none;
+  background-color: #2980b924
 }
 .main ::placeholder {
   color: #000000;
@@ -77,7 +80,7 @@ main .iconDownload {
 .main input[type="submit"] {
   padding: 12px 0;
   color: #fff;
-  background-color: #d34e3c;
+  background-color: #27ae60;
   border: none;
   border-radius: 4px;
   text-align: center;
@@ -219,7 +222,7 @@ main .iconDownload {
 
 .uploadFileButton{
   /* Customize the background color */
-  background-color: #d34e3c;
+  background-color: #27ae60;
   /* Add some padding to the button */
   padding: 10px 20px;
   /* Add a border */
@@ -255,22 +258,25 @@ main .iconDownload {
 
 .main .flashcard {
   position: relative;
-  background-color: #d34e3c;
+  background-color: #2980b9;
   transform-style: preserve-3d;
   transition: transform 0.5s;
   width: 300px;
-  height: auto;
+  height: fit-content;
+  justify-content: center; /* Add this line */
+  align-items: center; /* Add this line */
   display: inline-block;
   border: #000000;
   border-style: solid;
   border-width: 1px;
   border-radius: 25px;
-  padding: 20px;
+  padding:initial;
   margin: 0px 40px 0px 40px;
+  color: white;
+
 }
 
 .main .front, .main .back {
-  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -283,6 +289,9 @@ main .iconDownload {
 
 .main .back {
   transform: rotateY(-180deg);
+  background-color: #2c3e50 ;
+  border-radius: 25px;
+
 }
 
 .main .show-back {
@@ -316,7 +325,7 @@ input[type="checkbox"].switch {
 }
 
 input[type="checkbox"].switch:checked {
-  background-color: #f3e5a7fa;
+  background-color: #27ae60;
 }
 
 input[type="checkbox"].switch:before {
@@ -377,5 +386,4 @@ input[type="checkbox"].switch:checked ~ div[name="numberOfQuestions"] {
   text-transform: uppercase;
   letter-spacing: 1px;
   text-align: center;
-  background-color: #f3e5a7fa !important;
 }
