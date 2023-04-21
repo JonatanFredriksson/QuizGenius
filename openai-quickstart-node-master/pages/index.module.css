@@ -312,7 +312,7 @@ float: right;
   
   transform-style: preserve-3d;
   transition: transform 0.5s;
-  width: 300px;
+  width: 280px;
   height: fit-content;
   justify-content: center;
   /* Add this line */
@@ -330,7 +330,9 @@ float: right;
 }
 
 .front{
-  background-color: #297fb952;
+  background-color: #297fb9;
+  border-radius: 25px;
+
 }
 .main .front,
 .main .back {
