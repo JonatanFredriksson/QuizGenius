@@ -414,8 +414,31 @@ export default function Home() {
 
 
       <main className={styles.main}>
+        <div className={styles.uploadAndDownload}>
+          <button className={styles.download} id="downloadButton">
+            <img src="/DownloadIconTransparent.png" className={styles.iconDownload} />
+
+          </button>
+
+          <button className={styles.download} id="uploadButton">
+            <label htmlFor="fileInput" >
+              <img src="/UploadIcon.png" className={styles.iconDownload} />
+
+            </label>
+          </button>
+
+          <input className={styles.uploadFileButton}
+            id="fileInput"
+            type="file"
+            accept=".json"
+            onChange={uploadFlashcards}
+            style={{ display: 'none' }}
+          />
+        </div>
+
         <div>
           <img src="/QuizGenius-1.png" className={styles.icon} />
+
 
         </div>
         <div>
@@ -460,7 +483,7 @@ export default function Home() {
               <span className={styles.slider}></span>
 
             </div>
-            <input type="submit" className={styles.submitButtonSingle} value="Generate one question" onClick={() => generateSingleQuestion()} style={{ display: multiQuestions ? "inline-block" : "none" }} />
+            <input type="submit" className={styles.submitButtonSingle} value="Generate one question" onClick={() => {generateSingleQuestion(); handleBoxSize()}} style={{ display: multiQuestions ? "inline-block" : "none" }} />
 
 
             <div name="numberOfQuestions" className={multiQuestions ? styles.hidden : ""}>
@@ -478,7 +501,7 @@ export default function Home() {
 
 
 
-            <input type="submit" class="submitButton" value="Generate questions" style={{ display: multiQuestions ? "none" : "inline-block" }} />
+            <input type="submit" className={styles.submitButtonSingle} value="Generate questions" style={{ display: multiQuestions ? "none" : "inline-block" }} />
 
 
 
@@ -486,20 +509,25 @@ export default function Home() {
         </div>
 
 
-        <div className={styles.result2}>
-          <div className={styles.containerLeftArrow}>
-            {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
-          </div>
+        <div className={styles.containerFlashcard}>
+          <div className={styles.result2}>
 
-          <div class={styles.flashcard} onClick={handleFlip} id='flashcard' >
-            <div class={styles.front} id='front' style={{ display: answerShowing ? "none" : "inline-block" }}>{currentQuestion} </div>
-            <div class={styles.back} id='back' style={{ display: answerShowing ? "inline-block" : "none" }}>{currentAnswer}</div>
-          </div>
+            <div className={styles.containerLeftArrow}>
+              {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
+            </div>
 
-          <div className={styles.containerRightArrow}>
-            {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
+            <div class={styles.flashcard} onClick={handleFlip} id='flashcard' >
+              <div class={styles.front} id='front' style={{ display: answerShowing ? "none" : "inline-block" }}>{currentQuestion} </div>
+              <div class={styles.back} id='back' style={{ display: answerShowing ? "inline-block" : "none" }}>{currentAnswer}</div>
+            </div>
+
+
+            <div className={styles.containerRightArrow}>
+              {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
+            </div>
           </div>
         </div>
+
 
 
         <div class={styles.buttons}>
@@ -510,26 +538,7 @@ export default function Home() {
           Correct answers: {correctAnswers}/{answeredQuestions}{" "}
         </div>
         {answeredQuestions === 0 ? (<div>No questions answered yet</div>) : (<div>{Math.round((correctAnswers / answeredQuestions) * 100)}%</div>)}
-        <p className={styles.textarea}>Download File</p>
-
-        <button className={styles.downloadUpload} id="downloadButton">
-          <img src="/DownloadIconTransparent.png" className={styles.iconDownload} />
-
-        </button>
-
-        <div className={styles.uploadFileButton}>
-          <label htmlFor="fileInput" className={styles.customFileInput}>
-            Upload File
-          </label>
-        </div>
-        <input className={styles.uploadFileButton}
-          id="fileInput"
-          type="file"
-          accept=".json"
-          onChange={uploadFlashcards}
-          style={{ display: 'none' }}
-        />
-
+        
       </main>
     </div>
   );
