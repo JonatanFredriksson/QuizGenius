@@ -71,7 +71,7 @@ export default async function (req, res) {
       const randomIndex = Math.floor(Math.random() * inputChunks.length);
 
       const randomChunk = inputChunks[randomIndex];
-      const prompt = `Give me a question and corresponding answer different from the previous ones on the specific text, in the format of: \nQ: question \nA: answer. \nTry to answer in the same language as the provided notes. Example Output: \nQ: What is the capital of France?\nA: The capital of France is Paris. \nQ: What is the capital of Germany?\nA: The capital of Germany is Berlin.\nThe following is the text to analyze: ${randomChunk} \n:END OF INPUT TEXT TO ANALYZE`;
+      const prompt = `Give me a question and corresponding answer different from the ones generated in the previous promt, on the specific text, in the format of: \nQ: question \nA: answer. \nTry to answer in the same language as the provided notes. Example Output: \nQ: What is the capital of France?\nA: The capital of France is Paris. \nQ: What is the capital of Germany?\nA: The capital of Germany is Berlin.\nThe following is the text to analyze: ${randomChunk} \n:END OF INPUT TEXT TO ANALYZE`;
 
 
       completion = await openai.createCompletion({ // call createCompletion once with the prompt

@@ -187,8 +187,14 @@ main .iconDownload {
   -webkit-transform: translate(-50%, -50%);  
   transform: translate(-50%, -50%);
   top: 50%;
+}
 
-  
+.main .containerFlashcard {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  height: 200px;
 }
 
 .main .answer {
@@ -285,6 +291,7 @@ main .iconDownload {
   backface-visibility: hidden;
   font-size: 16px;
   line-height: 40px;
+  width: 300px;
 }
 
 .main .back {

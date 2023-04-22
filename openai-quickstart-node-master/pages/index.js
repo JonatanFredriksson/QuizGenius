@@ -478,29 +478,29 @@ export default function Home() {
 
 
 
-            <input type="submit" class="submitButton" value="Generate questions" style={{ display: multiQuestions ? "none" : "inline-block" }} />
+            <input type="submit" class="submitButton" onClick= {handleBoxSize} value="Generate questions" style={{ display: multiQuestions ? "none" : "inline-block" }} />
 
 
 
           </form>
         </div>
 
+        <div className={styles.containerFlashcard}>
+          <div className={styles.result2}>
+            <div className={styles.containerLeftArrow}>
+              {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
+            </div>
 
-        <div className={styles.result2}>
-          <div className={styles.containerLeftArrow}>
-            {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
-          </div>
+            <div class={styles.flashcard} onClick={handleFlip} id='flashcard' >
+              <div class={styles.front} id='front' style={{ display: answerShowing ? "none" : "inline-block" }}>{currentQuestion} </div>
+              <div class={styles.back} id='back' style={{ display: answerShowing ? "inline-block" : "none" }}>{currentAnswer}</div>
+            </div>
 
-          <div class={styles.flashcard} onClick={handleFlip} id='flashcard' >
-            <div class={styles.front} id='front' style={{ display: answerShowing ? "none" : "inline-block" }}>{currentQuestion} </div>
-            <div class={styles.back} id='back' style={{ display: answerShowing ? "inline-block" : "none" }}>{currentAnswer}</div>
-          </div>
-
-          <div className={styles.containerRightArrow}>
-            {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
+            <div className={styles.containerRightArrow}>
+              {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
+            </div>
           </div>
         </div>
-
         
         <div class={styles.buttons}>
           <button class={styles.green} id="greenButt" onClick={pressGButton}>KNOW IT WELL</button>
