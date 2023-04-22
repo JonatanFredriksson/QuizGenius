@@ -31,13 +31,13 @@ export default function Home() {
   const MAX_LENGTH = 50; // maximum length to trigger font size change
   const MIN_FONT_SIZE = 14; // minimum font size
   const MAX_FONT_SIZE = 20; // maximum font size
-  
+
   function getFontSize(text) {
     console.log("Längden: " + text.length);
     if (text.length > MAX_LENGTH) {
       return MIN_FONT_SIZE;
     }
-    else{
+    else {
       return MAX_FONT_SIZE;
 
     }
@@ -153,7 +153,6 @@ export default function Home() {
 
 
       //window.scrollTo(0, document.body.scrollHeight);
-      document.getElementById('flashcard').scrollIntoView({ behavior: 'smooth', block: 'end' });
 
 
 
@@ -179,7 +178,11 @@ export default function Home() {
 */
       // Trigger uploadFlashcards() function when a file input changes
       //document.getElementById("uploadInput").addEventListener("change", uploadFlashcards);
-
+      if (document.getElementById('flashcard')) {
+        document.getElementById('flashcard').scrollIntoView({ behavior: 'smooth', block: 'end' });
+      } else {
+        window.scrollTo(0, document.body.scrollHeight);
+      }
 
     } catch (error) {
       // Consider implementing your own error handling logic here
@@ -348,7 +351,7 @@ export default function Home() {
     var myBox = document.getElementById("thetextbox");
     console.log("RESET");
     myBox.style.height = "auto";
-    
+
   }
 
   function calcRightAnswers() {
@@ -498,7 +501,7 @@ export default function Home() {
               <span className={styles.slider}></span>
 
             </div>
-            <input type="submit" className={styles.submitButtonSingle} value="Generate one question" onClick={() => {generateSingleQuestion(); handleBoxSize()}} style={{ display: multiQuestions ? "inline-block" : "none" }} />
+            <input type="submit" className={styles.submitButtonSingle} value="Generate one question" onClick={() => { generateSingleQuestion(); handleBoxSize() }} style={{ display: multiQuestions ? "inline-block" : "none" }} />
 
 
             <div name="numberOfQuestions" className={multiQuestions ? styles.hidden : ""}>
@@ -516,7 +519,7 @@ export default function Home() {
 
 
 
-            <input type="submit" className={styles.submitButtonSingle} onClick={() => { handleBoxSize()}} value="Generate questions" style={{ display: multiQuestions ? "none" : "inline-block" }} />
+            <input type="submit" className={styles.submitButtonSingle} onClick={() => { handleBoxSize() }} value="Generate questions" style={{ display: multiQuestions ? "none" : "inline-block" }} />
 
 
 
@@ -524,37 +527,39 @@ export default function Home() {
         </div>
 
 
-        <div className={styles.containerFlashcard}>
-          <div className={styles.result2}>
+        {qaPairs.length === 0 ? null : (
+          <div className={styles.containerFlashcard}>
+            <div className={styles.result2}>
 
-            <div className={styles.containerLeftArrow}>
-              {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
-            </div>
+              <div className={styles.containerLeftArrow}>
+                {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
+              </div>
 
-            <div class={styles.flashcard} onClick={handleFlip} id='flashcard' style={{
-        fontSize: `${getFontSize(currentQuestion)}px`,
-        "font-size": `${getFontSize(currentQuestion)}px !important`
-      }}>
-              <div class={styles.front} id='front' style={{ display: answerShowing ? "none" : "inline-block" }}>{currentQuestion} </div>
-              <div class={styles.back} id='back' 
-              style={{
-                display: answerShowing ? "inline-block" : "none",
-                fontSize: `${getFontSize(currentAnswer)}px`,
-                "font-size": `${getFontSize(currentAnswer)}px !important`
-              }}
-              >{currentAnswer}</div>
-            </div>
+              <div class={styles.flashcard} onClick={handleFlip} id='flashcard' style={{
+                fontSize: `${getFontSize(currentQuestion)}px`,
+                "font-size": `${getFontSize(currentQuestion)}px !important`
+              }}>
+                <div class={styles.front} id='front' style={{ display: answerShowing ? "none" : "inline-block" }}>{currentQuestion} </div>
+                <div class={styles.back} id='back'
+                  style={{
+                    display: answerShowing ? "inline-block" : "none",
+                    fontSize: `${getFontSize(currentAnswer)}px`,
+                    "font-size": `${getFontSize(currentAnswer)}px !important`
+                  }}
+                >{currentAnswer}</div>
+              </div>
 
 
-            <div className={styles.containerRightArrow}>
-              {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
+              <div className={styles.containerRightArrow}>
+                {!last && <button className={styles.buttonright} onClick={() => showNext()}></button>}
+              </div>
             </div>
           </div>
-        </div>
+        )}
+        {qaPairs.length === 0 ? null : (
 
-
-
-        <div class={styles.buttons}>
+        <div className="buttonsAndFeeback">
+<div class={styles.buttons}>
           <button class={styles.green} id="greenButt" onClick={pressGButton}>KNOW IT WELL</button>
           <button class={styles.red} id="redButt" onClick={pressRButton}>DON'T KNOW IT</button>
         </div>
@@ -562,7 +567,10 @@ export default function Home() {
           Correct answers: {correctAnswers}/{answeredQuestions}{" "}
         </div>
         {answeredQuestions === 0 ? (<div>No questions answered yet</div>) : (<div>{Math.round((correctAnswers / answeredQuestions) * 100)}%</div>)}
+        </div>
+        )}
         
+
       </main>
     </div>
   );
