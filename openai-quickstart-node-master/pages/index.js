@@ -181,7 +181,7 @@ export default function Home() {
       if (document.getElementById('flashcard')) {
         document.getElementById('flashcard').scrollIntoView({ behavior: 'smooth', block: 'end' });
       } else {
-        window.scrollTo(0, document.body.scrollHeight);
+        window.scrollTo(0, document.body.scrollHeight); //la till lite error hantering för om man inte har flashcards sen innan så kan den krasha annars
       }
 
     } catch (error) {
@@ -287,8 +287,21 @@ export default function Home() {
     setIndexQ(newIndex);
     setCurrentQuestion(dataRes[newIndex].question); //sets to first question
     setCurrentAnswer(dataRes[newIndex].answer); //sets to first answer
-    setLast(true);
-    setFirst(false);
+    if(dataRes.length==1){
+      setLast(true);
+      setFirst(true); //den kan vara både och
+    }
+    else{
+      setLast(true);
+      setFirst(false); //inte så bra eftersom det faktiskt kan vara både och
+    }
+   
+if(answerShowing==true){
+  handleFlip();
+}
+
+
+
   }
 
   function showNext() {

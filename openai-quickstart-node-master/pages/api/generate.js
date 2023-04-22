@@ -87,15 +87,20 @@ export default async function (req, res) {
     }
     else{ // vi kör flera flera frågor modet
       const inputChunks = chunkInputText(inputText, 500); // break input into 250-character chunks
-      const nrOfQuestionsToGenerate = questionPerChunk(inputChunks, amount);
+      let nrOfQuestionsToGenerate = questionPerChunk(inputChunks, amount);
       console.log("Antalet gånger: " + inputChunks.length);
   
   
+
       const completionPromises = inputChunks.map(chunk => { //Vi verkar endast utföra loopen fyran gånger
+        if(nrOfQuestionsToGenerate==2){
+          nrOfQuestionsToGenerate=3; //av nån anledning, kanske apin så är just två buggigt, så vi får köra en extra fråga och svar
+        }
         const prompt = quizMePrompt(chunk, nrOfQuestionsToGenerate); // vi skapar en prompt för varje chunk, det kan bli för många frågor då får vi rensa senare
         console.log("Detta är chunken vi skickar in i prompt: " + chunk);
         console.log("Detta är antalet frågor som chunken ska besvara: " + nrOfQuestionsToGenerate);
         console.log("Prompten: " + prompt);
+        
         return openai.createCompletion({
           model: "text-davinci-003",
           prompt: prompt,
@@ -242,7 +247,7 @@ function chunkInputText(inputText, chunkLimit) {
 
 function questionPerChunk(inputChunks, amountOfQuestions) { //fördela antalet questions på antalet chunks och ta bort om det blir för många
 
-  const nrOfQuestionsPerChunk = Math.ceil(amountOfQuestions / inputChunks.length);
+  let nrOfQuestionsPerChunk = Math.ceil(amountOfQuestions / inputChunks.length);
   return nrOfQuestionsPerChunk;
 
 
@@ -267,7 +272,9 @@ function formatResult(generatedText, amount) { //tar in amount eftersom vi vill 
     const question = splitText[i * 2]; // 0..2..4..
     const answer = splitText[i * 2 + 1]; //1..3..5
 
-    formattedQuestions.push(`${i + 1}. ${question}`);
+    if (!question.length || !answer.length) {
+      console.log("Either question or answer is empty.");
+    }    formattedQuestions.push(`${i + 1}. ${question}`);
     formattedAnswers.push(`${i + 1}. ${answer}`);
     console.log("KLOCK: " + i);
 
