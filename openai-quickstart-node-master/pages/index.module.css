@@ -106,10 +106,10 @@ main .iconDownload {
 
 .main .result2 {
   font-weight: bold;
-  margin-top: 40px;
-  margin-bottom: 100px;
+  /*margin-top: 40px;*/
+  /*margin-bottom: 100px;*/
   white-space: pre-line;
-  width: 550px;
+  /*width: 550px;*/
   vertical-align: middle;
   text-align: center;
   position: relative;
@@ -312,19 +312,17 @@ float: right;
   
   transform-style: preserve-3d;
   transition: transform 0.5s;
-  width: 280px;
+  width: initial;
   height: fit-content;
   justify-content: center;
   /* Add this line */
   align-items: center;
   /* Add this line */
   display: inline-block;
-  border: #000000;
-  border-style: solid;
   border-width: 1px;
   border-radius: 25px;
   padding: initial;
-  margin: 0px 40px 0px 40px;
+  margin: 40px 40px 40px 40px;
   color: white;
 
 }
@@ -343,8 +341,11 @@ float: right;
   text-align: center;
   backface-visibility: hidden;
   font-size: 16px;
-  line-height: 40px;
+  line-height: 30px;
   padding: 20px;
+  margin: 20px 0px;
+
+
 }
 
 .main .back {
@@ -493,7 +494,8 @@ input[type="checkbox"].switch:checked~div[name="numberOfQuestions"] {
   align-items: center;
   margin-top: 20px;
   height: 40vh;
-  margin: 20px;
+  margin: 50px 20px;
+  clear: both !important;
 }
 
 
@@ -503,3 +505,5 @@ input[type="checkbox"].switch:checked~div[name="numberOfQuestions"] {
 width: 100%;
 
 }
+
+

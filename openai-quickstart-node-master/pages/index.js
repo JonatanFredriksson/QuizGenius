@@ -28,7 +28,20 @@ export default function Home() {
 
   let qaPairsRef = useRef([]); // Ref to store updated qaPairs value
 
+  const MAX_LENGTH = 50; // maximum length to trigger font size change
+  const MIN_FONT_SIZE = 14; // minimum font size
+  const MAX_FONT_SIZE = 20; // maximum font size
+  
+  function getFontSize(text) {
+    console.log("Längden: " + text.length);
+    if (text.length > MAX_LENGTH) {
+      return MIN_FONT_SIZE;
+    }
+    else{
+      return MAX_FONT_SIZE;
 
+    }
+  }
 
   function handleSwitchChange(e) {
     console.log("YOYOYO");
@@ -516,9 +529,18 @@ export default function Home() {
               {!first && <button className={styles.buttonleft} onClick={() => showPrevious()}> </button>}
             </div>
 
-            <div class={styles.flashcard} onClick={handleFlip} id='flashcard' >
+            <div class={styles.flashcard} onClick={handleFlip} id='flashcard' style={{
+        fontSize: `${getFontSize(currentQuestion)}px`,
+        "font-size": `${getFontSize(currentQuestion)}px !important`
+      }}>
               <div class={styles.front} id='front' style={{ display: answerShowing ? "none" : "inline-block" }}>{currentQuestion} </div>
-              <div class={styles.back} id='back' style={{ display: answerShowing ? "inline-block" : "none" }}>{currentAnswer}</div>
+              <div class={styles.back} id='back' 
+              style={{
+                display: answerShowing ? "inline-block" : "none",
+                fontSize: `${getFontSize(currentAnswer)}px`,
+                "font-size": `${getFontSize(currentAnswer)}px !important`
+              }}
+              >{currentAnswer}</div>
             </div>
 
 
