@@ -346,7 +346,9 @@ export default function Home() {
 
   function handleBoxSize() {
     var myBox = document.getElementById("thetextbox");
+    console.log("RESET");
     myBox.style.height = "auto";
+    
   }
 
   function calcRightAnswers() {
@@ -514,7 +516,7 @@ export default function Home() {
 
 
 
-            <input type="submit" className={styles.submitButtonSingle} value="Generate questions" style={{ display: multiQuestions ? "none" : "inline-block" }} />
+            <input type="submit" className={styles.submitButtonSingle} onClick={() => { handleBoxSize()}} value="Generate questions" style={{ display: multiQuestions ? "none" : "inline-block" }} />
 
 
 
