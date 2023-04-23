@@ -423,7 +423,10 @@ if(answerShowing==true){
     }
     flashcard.classList.toggle(styles.showback);
   }
-
+function reset(){
+  localforage.clear();
+  location.href = location.href;
+}
 
   const generateSingleQuestion = () => {
     if (multiQuestions === true) {
@@ -448,6 +451,10 @@ if(answerShowing==true){
         <div className={styles.uploadAndDownload}>
           <button className={styles.download} id="downloadButton">
             <img src="/DownloadIconTransparent.png" className={styles.iconDownload} />
+
+          </button>
+          <button className={styles.download} id="resetButton" onClick={reset}>
+            <img src="/resetIcon.png" className={styles.iconDownload} />
 
           </button>
 
