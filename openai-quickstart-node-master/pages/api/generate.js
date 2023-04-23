@@ -38,14 +38,23 @@ export default async function (req, res) {
 
 
   const amount = req.body.amount || 0;
-  if ((!Number.isInteger(amount) || amount <= 0 )&& questionMode == false) {
-    res.status(400).json({
-      error: {
-        message: "Please enter a valid number",
-      }
-    });
-    return;
+  if(questionMode==false){ //standard
+    
+    if(amount % 1 === 0 && amount > 0 ){
+//detta är ok, vi har en integer, som är positiv
+    }
+    else{
+      res.status(400).json({
+        error: {
+          message: "Please enter a valid number",
+        }
+      });
+      return;
+    }
+      
   }
+  
+ 
 
 
   /*

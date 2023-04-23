@@ -284,6 +284,8 @@ export default function Home() {
 
 
     let newIndex = (dataRes.length - 1);
+    rwAnswers.push('unanswered');
+    resetButtons(newIndex);
     setIndexQ(newIndex);
     setCurrentQuestion(dataRes[newIndex].question); //sets to first question
     setCurrentAnswer(dataRes[newIndex].answer); //sets to first answer
@@ -293,7 +295,7 @@ export default function Home() {
     }
     else{
       setLast(true);
-      setFirst(false); //inte så bra eftersom det faktiskt kan vara både och
+      setFirst(false); //vi har fler kort innan
     }
    
 if(answerShowing==true){
