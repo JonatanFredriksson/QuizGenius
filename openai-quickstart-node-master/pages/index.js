@@ -184,6 +184,15 @@ export default function Home() {
         window.scrollTo(0, document.body.scrollHeight); //la till lite error hantering för om man inte har flashcards sen innan så kan den krasha annars
       }
 
+
+      if(document.getElementById('greenButt') !== null){
+        document.getElementById('greenButt').classList.remove(styles.pressed);
+      }
+      if(document.getElementById('redButt') !== null ){
+        document.getElementById('redButt').classList.remove (styles.pressed);
+
+      }
+
     } catch (error) {
       // Consider implementing your own error handling logic here
       console.error(error);
@@ -357,10 +366,16 @@ if(answerShowing==true){
       document.getElementById('greenButt').classList.remove(styles.pressed);
     }
     else {
-      if(styles.pressed){
+      
+      if(document.getElementById('greenButt') !== null && styles.pressed){
         document.getElementById('greenButt').classList.remove(styles.pressed);
-        document.getElementById('redButt').classList.remove(styles.pressed);
       }
+      if(document.getElementById('redButt') !== null && styles.pressed){
+        document.getElementById('redButt').classList.remove(styles.pressed);
+
+      }
+      
+      
       
     }
   }
