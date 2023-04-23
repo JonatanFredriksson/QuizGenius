@@ -147,7 +147,6 @@ export default function Home() {
       console.log(formattedResult);
 
 
-
       // qaPairs = gamla
       //data.result = nya
 
@@ -182,6 +181,13 @@ export default function Home() {
         document.getElementById('flashcard').scrollIntoView({ behavior: 'smooth', block: 'end' });
       } else {
         window.scrollTo(0, document.body.scrollHeight); //la till lite error hantering för om man inte har flashcards sen innan så kan den krasha annars
+      }
+
+      if (document.getElementById('greenButt')!== null){
+        document.getElementById('greenButt').classList.remove(styles.pressed);
+      }
+      if(document.getElementById('redButt')!== null){
+        document.getElementById('redButt').classList.remove(styles.pressed);
       }
 
     } catch (error) {
@@ -226,7 +232,7 @@ export default function Home() {
     //var file = document.getElementById("fileInput");
     var reader = new FileReader();
     reader.onload = function (e) {
-      var flashcards = JSON.parse(e.target.result);
+      const flashcards = JSON.parse(e.target.result);
       console.log("Flashcards loaded from file:");
       console.log(flashcards);
       // Use the loaded flashcards as needed, e.g., update your flashcards data structure or render them on the page
@@ -238,6 +244,7 @@ export default function Home() {
       qaPairsRef.current = flashcards;
 
     };
+    console.log("qaPairs" + qaPairs);
     reader.readAsText(file);
     //setQAPairs(event); //säter qaPair till det upladdade
     //initializeArrows(qaPairs);
@@ -260,7 +267,7 @@ export default function Home() {
     setCurrentQuestion(dataRes[0].question); //sets to first question
     setCurrentAnswer(dataRes[0].answer); //sets to first answer
     console.log("AmountINput:  " + amountInput);
-    if (amountInput > 1) { //om vi bara har en så ska arrows inte komma upp, dock måste exception finnas eftersom vi nu har generate question en i taget, så vi har multiquestion boolen som en check, om den är false så är det ett antal frågor och vi gör nytt, 
+    if (dataRes.length>1) { //om vi bara har en så ska arrows inte komma upp, dock måste exception finnas eftersom vi nu har generate question en i taget, så vi har multiquestion boolen som en check, om den är false så är det ett antal frågor och vi gör nytt, 
       setLast(false);
 
     }
@@ -356,9 +363,17 @@ if(answerShowing==true){
       document.getElementById('redButt').classList.add(styles.pressed);
       document.getElementById('greenButt').classList.remove(styles.pressed);
     }
-    else {
+    else if (multiQuestions==false){
       document.getElementById('greenButt').classList.remove(styles.pressed);
       document.getElementById('redButt').classList.remove(styles.pressed);
+    }
+    else {
+      if (document.getElementById('greenButt')!== null){
+        document.getElementById('greenButt').classList.remove(styles.pressed);
+      }
+      if(document.getElementById('redButt')!== null){
+        document.getElementById('redButt').classList.remove(styles.pressed);
+      }
     }
   }
 
@@ -581,15 +596,15 @@ function reset(){
         {qaPairs.length === 0 ? null : (
 
         <div className="buttonsAndFeeback">
-<div class={styles.buttons}>
-          <button class={styles.green} id="greenButt" onClick={pressGButton}>KNOW IT WELL</button>
-          <button class={styles.red} id="redButt" onClick={pressRButton}>DON'T KNOW IT</button>
-        </div>
-        <div>
-          Correct answers: {correctAnswers}/{answeredQuestions}{" "}
-        </div>
-        {answeredQuestions === 0 ? (<div>No questions answered yet</div>) : (<div>{Math.round((correctAnswers / answeredQuestions) * 100)}%</div>)}
-        </div>
+          <div class={styles.buttons}>
+            <button class={styles.green} id="greenButt" onClick={pressGButton}>KNOW IT WELL</button>
+            <button class={styles.red} id="redButt" onClick={pressRButton}>DON'T KNOW IT</button>
+          </div>
+          <div>
+            Correct answers: {correctAnswers}/{answeredQuestions}{" "}
+          </div>
+            {answeredQuestions === 0 ? (<div>No questions answered yet</div>) : (<div>{Math.round((correctAnswers / answeredQuestions) * 100)}%</div>)}
+          </div>
         )}
         
 
