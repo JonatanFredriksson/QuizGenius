@@ -260,7 +260,7 @@ export default function Home() {
     setCurrentQuestion(dataRes[0].question); //sets to first question
     setCurrentAnswer(dataRes[0].answer); //sets to first answer
     console.log("AmountINput:  " + amountInput);
-    if (amountInput > 1) { //om vi bara har en så ska arrows inte komma upp, dock måste exception finnas eftersom vi nu har generate question en i taget, så vi har multiquestion boolen som en check, om den är false så är det ett antal frågor och vi gör nytt, 
+    if (dataRes.length > 1) { //om vi bara har en så ska arrows inte komma upp, dock måste exception finnas eftersom vi nu har generate question en i taget, så vi har multiquestion boolen som en check, om den är false så är det ett antal frågor och vi gör nytt, 
       setLast(false);
 
     }
@@ -357,8 +357,11 @@ if(answerShowing==true){
       document.getElementById('greenButt').classList.remove(styles.pressed);
     }
     else {
-      document.getElementById('greenButt').classList.remove(styles.pressed);
-      document.getElementById('redButt').classList.remove(styles.pressed);
+      if(styles.pressed){
+        document.getElementById('greenButt').classList.remove(styles.pressed);
+        document.getElementById('redButt').classList.remove(styles.pressed);
+      }
+      
     }
   }
 
