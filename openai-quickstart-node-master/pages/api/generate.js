@@ -38,7 +38,7 @@ export default async function (req, res) {
 
 
   const amount = req.body.amount || 0;
-  if (amount === 0 && questionMode==false) {
+  if ((!Number.isInteger(amount) || amount <= 0 )&& questionMode == false) {
     res.status(400).json({
       error: {
         message: "Please enter a valid number",
